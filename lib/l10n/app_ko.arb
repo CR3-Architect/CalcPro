@@ -1,0 +1,17 @@
+{
+  "@@locale": "ko",
+  "appTitle": "CalcPro 스튜디오",
+  "standard": "표준",
+  "scientific": "과학",
+  "calculus": "미적분",
+  "linearAlgebra": "선형대수",
+  "complexNumbers": "복소수",
+  "statistics": "통계",
+  "programmer": "프로그래머",
+  "converter": "변환기",
+  "settings": "설정",
+  "history": "기록",
+  "clearAll": "모두 지우기",
+  "theme": "테마",
+  "angleMode": "각도 모드"
+}

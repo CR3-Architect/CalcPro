@@ -1,0 +1,17 @@
+{
+  "@@locale": "es",
+  "appTitle": "CalcPro Studio",
+  "standard": "Estándar",
+  "scientific": "Científica",
+  "calculus": "Cálculo",
+  "linearAlgebra": "Álgebra Lineal",
+  "complexNumbers": "Números Complejos",
+  "statistics": "Estadística",
+  "programmer": "Programador",
+  "converter": "Convertidor",
+  "settings": "Configuración",
+  "history": "Historial",
+  "clearAll": "Borrar Todo",
+  "theme": "Tema",
+  "angleMode": "Modo de Ángulo"
+}

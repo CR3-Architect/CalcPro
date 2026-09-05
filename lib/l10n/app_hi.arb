@@ -1,0 +1,17 @@
+{
+  "@@locale": "hi",
+  "appTitle": "कैल्कप्रो स्टूडियो",
+  "standard": "मानक",
+  "scientific": "वैज्ञानिक",
+  "calculus": "गणना",
+  "linearAlgebra": "रैखिक बीजगणित",
+  "complexNumbers": "जटिल संख्याएँ",
+  "statistics": "सांख्यिकी",
+  "programmer": "प्रोग्रामर",
+  "converter": "कनवर्टर",
+  "settings": "सेटिंग्स",
+  "history": "इतिहास",
+  "clearAll": "सब साफ़ करें",
+  "theme": "थीम",
+  "angleMode": "कोण मोड"
+}

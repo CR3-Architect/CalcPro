@@ -1,0 +1,17 @@
+{
+  "@@locale": "ja",
+  "appTitle": "CalcPro スタジオ",
+  "standard": "標準",
+  "scientific": "科学",
+  "calculus": "微積分",
+  "linearAlgebra": "線形代数",
+  "complexNumbers": "複素数",
+  "statistics": "統計",
+  "programmer": "プログラマー",
+  "converter": "変換ツール",
+  "settings": "設定",
+  "history": "履歴",
+  "clearAll": "すべてクリア",
+  "theme": "テーマ",
+  "angleMode": "角度モード"
+}

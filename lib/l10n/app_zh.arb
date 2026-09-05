@@ -1,0 +1,17 @@
+{
+  "@@locale": "zh",
+  "appTitle": "CalcPro 工作室",
+  "standard": "标准",
+  "scientific": "科学",
+  "calculus": "微积分",
+  "linearAlgebra": "线性代数",
+  "complexNumbers": "复数",
+  "statistics": "统计",
+  "programmer": "程序员",
+  "converter": "转换器",
+  "settings": "设置",
+  "history": "历史",
+  "clearAll": "全部清除",
+  "theme": "主题",
+  "angleMode": "角度模式"
+}

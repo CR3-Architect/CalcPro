@@ -1,0 +1,17 @@
+{
+  "@@locale": "tr",
+  "appTitle": "CalcPro Stüdyo",
+  "standard": "Standart",
+  "scientific": "Bilimsel",
+  "calculus": "Kalkülüs",
+  "linearAlgebra": "Lineer Cebir",
+  "complexNumbers": "Karmaşık Sayılar",
+  "statistics": "İstatistik",
+  "programmer": "Programcı",
+  "converter": "Dönüştürücü",
+  "settings": "Ayarlar",
+  "history": "Geçmiş",
+  "clearAll": "Tümünü Temizle",
+  "theme": "Tema",
+  "angleMode": "Açı Modu"
+}
