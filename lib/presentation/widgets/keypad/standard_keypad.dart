@@ -5,7 +5,7 @@ import '../../../core/theme/color_tokens.dart';
 import '../../bloc/calculator_cubit.dart';
 import 'calc_button.dart';
 
-/// Standard calculator with expandable scientific panel
+/// Standard calculator — compact, professional, expandable scientific panel
 class StandardKeypad extends StatefulWidget {
   const StandardKeypad({super.key});
 
@@ -22,33 +22,35 @@ class _StandardKeypadState extends State<StandardKeypad> {
 
     return Column(
       children: [
-        // --- Expand/Collapse handle ---
+        // --- Expand handle ---
         GestureDetector(
           onTap: () => setState(() => _expanded = !_expanded),
-          child: Container(
-            height: 28,
-            alignment: Alignment.center,
-            child: AnimatedRotation(
-              turns: _expanded ? 0.5 : 0,
-              duration: const Duration(milliseconds: 220),
-              curve: Curves.easeOutCubic,
-              child: Icon(
-                Icons.keyboard_arrow_up_rounded,
-                size: 28,
-                color: ColorTokens.electricCyan.withOpacity(0.7),
+          behavior: HitTestBehavior.opaque,
+          child: SizedBox(
+            height: 24,
+            child: Center(
+              child: AnimatedRotation(
+                turns: _expanded ? 0.5 : 0,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeOutCubic,
+                child: Icon(
+                  Icons.keyboard_arrow_up_rounded,
+                  size: 24,
+                  color: ColorTokens.electricCyan.withOpacity(0.6),
+                ),
               ),
             ),
           ),
         ),
 
-        // --- Expanded scientific panel ---
+        // --- Scientific panel ---
         AnimatedSize(
-          duration: const Duration(milliseconds: 240),
+          duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
           alignment: Alignment.topCenter,
           child: _expanded
               ? SizedBox(
-                  height: 108,
+                  height: 112,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Column(
@@ -85,24 +87,24 @@ class _StandardKeypadState extends State<StandardKeypad> {
               : const SizedBox(height: 0),
         ),
 
-        // --- Main keypad ---
+        // --- Main 4x5 keypad ---
         Expanded(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: Column(
               children: [
-                // Row: C, ⌫, %, ÷
+                // C, ⌫, %, ÷
                 Expanded(
                   child: Row(
                     children: [
-                      CalcButton(text: 'C', type: CalcButtonType.clear, onPressed: () => cubit.clearAll()),
+                      CalcButton(text: 'AC', type: CalcButtonType.clear, onPressed: () => cubit.clearAll()),
                       CalcButton(icon: Icons.backspace_outlined, text: '', type: CalcButtonType.function, onPressed: () => cubit.backspace()),
                       CalcButton(text: '%', type: CalcButtonType.function, onPressed: () => cubit.inputPercent()),
                       CalcButton(text: '÷', type: CalcButtonType.operator, onPressed: () => cubit.inputOperator('/')),
                     ],
                   ),
                 ),
-                // Row: 7 8 9 ×
+                // 7 8 9 ×
                 Expanded(
                   child: Row(
                     children: [
@@ -113,7 +115,7 @@ class _StandardKeypadState extends State<StandardKeypad> {
                     ],
                   ),
                 ),
-                // Row: 4 5 6 −
+                // 4 5 6 −
                 Expanded(
                   child: Row(
                     children: [
@@ -124,7 +126,7 @@ class _StandardKeypadState extends State<StandardKeypad> {
                     ],
                   ),
                 ),
-                // Row: 1 2 3 +
+                // 1 2 3 +
                 Expanded(
                   child: Row(
                     children: [
@@ -135,7 +137,7 @@ class _StandardKeypadState extends State<StandardKeypad> {
                     ],
                   ),
                 ),
-                // Row: ± 0 . =
+                // ± 0 . =
                 Expanded(
                   child: Row(
                     children: [

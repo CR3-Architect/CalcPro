@@ -61,13 +61,13 @@ class _ResultDisplayState extends State<ResultDisplay>
           return const SizedBox.shrink();
         }
 
-        double fontSize = 40;
+        double fontSize = 34;
         if (displayResult.length > 16) {
-          fontSize = 22;
+          fontSize = 20;
         } else if (displayResult.length > 12) {
-          fontSize = 28;
+          fontSize = 24;
         } else if (displayResult.length > 9) {
-          fontSize = 34;
+          fontSize = 28;
         }
 
         return GestureDetector(

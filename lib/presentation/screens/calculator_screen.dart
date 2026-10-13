@@ -20,63 +20,80 @@ import 'unit_converter_screen.dart';
 import 'matrix_editor_screen.dart';
 import 'stats_input_screen.dart';
 
-/// Main calculator screen
+/// Main calculator screen — compact layout for modern tall phones
 class CalculatorScreen extends StatelessWidget {
   const CalculatorScreen({super.key});
 
   void _openModeSheet(BuildContext context, CalcMode current) {
     final cubit = context.read<CalculatorCubit>();
-    showModalBottomSheet(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    showModalBottomSheet<void>(
       context: context,
-      backgroundColor: Colors.transparent,
-      builder: (sheetCtx) => Container(
-        decoration: BoxDecoration(
-          color: Theme.of(sheetCtx).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 36,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.grey.withOpacity(0.4),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Calculator Mode',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(sheetCtx).colorScheme.onSurface,
-              ),
-            ),
-            const SizedBox(height: 8),
-            for (final mode in CalcMode.values)
-              ListTile(
-                dense: true,
-                leading: Icon(
-                  mode == current ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                  color: mode == current ? ColorTokens.electricCyan : null,
-                  size: 22,
-                ),
-                title: Text(mode.displayName),
-                subtitle: Text(
-                  mode.description,
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-                onTap: () {
-                  cubit.setMode(mode);
-                  Navigator.pop(sheetCtx);
-                },
-              ),
-          ],
-        ),
+      backgroundColor: isDark ? ColorTokens.darkSurface : ColorTokens.lightSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
+      builder: (sheetCtx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.35),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Calculator Mode',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? ColorTokens.darkOnBackground : ColorTokens.lightOnBackground,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                for (final mode in CalcMode.values)
+                  ListTile(
+                    dense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                    leading: Icon(
+                      mode == current ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                      color: mode == current ? ColorTokens.electricCyan : null,
+                      size: 20,
+                    ),
+                    title: Text(
+                      mode.displayName,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: mode == current ? FontWeight.w600 : FontWeight.w400,
+                        color: isDark ? ColorTokens.darkOnBackground : ColorTokens.lightOnBackground,
+                      ),
+                    ),
+                    subtitle: Text(
+                      mode.description,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: (isDark ? ColorTokens.darkOnSurface : ColorTokens.lightOnSurface)
+                            .withOpacity(0.6),
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(sheetCtx);
+                      cubit.setMode(mode);
+                    },
+                  ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -93,84 +110,93 @@ class CalculatorScreen extends StatelessWidget {
           body: SafeArea(
             child: Column(
               children: [
-                // --- Top Bar ---
+                // --- Top Bar (compact) ---
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  child: Row(
-                    children: [
-                      // Mode selector button
-                      Material(
-                        color: isDark ? ColorTokens.darkSurface : ColorTokens.lightSurface,
-                        borderRadius: BorderRadius.circular(12),
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(12),
-                          onTap: () => _openModeSheet(context, state.mode),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  state.mode.displayName,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: fg,
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                  child: SizedBox(
+                    height: 44,
+                    child: Row(
+                      children: [
+                        // Mode chip
+                        Material(
+                          color: isDark ? ColorTokens.darkSurface : ColorTokens.lightSurface,
+                          borderRadius: BorderRadius.circular(10),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(10),
+                            onTap: () => _openModeSheet(context, state.mode),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    state.mode.displayName,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: fg,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 4),
-                                Icon(Icons.expand_more_rounded, size: 20, color: fg.withOpacity(0.6)),
-                              ],
+                                  const SizedBox(width: 2),
+                                  Icon(Icons.expand_more_rounded, size: 18, color: fg.withOpacity(0.5)),
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const Spacer(),
-                      // Undo
-                      BlocBuilder<CalculatorCubit, CalculatorState>(
-                        buildWhen: (p, c) => p.canUndo != c.canUndo,
-                        builder: (context, s) => IconButton(
-                          onPressed: s.canUndo ? () => context.read<CalculatorCubit>().undo() : null,
-                          icon: const Icon(Icons.undo_rounded, size: 20),
+                        const Spacer(),
+                        BlocBuilder<CalculatorCubit, CalculatorState>(
+                          buildWhen: (p, c) => p.canUndo != c.canUndo,
+                          builder: (context, s) => IconButton(
+                            onPressed: s.canUndo ? () => context.read<CalculatorCubit>().undo() : null,
+                            icon: const Icon(Icons.undo_rounded, size: 19),
+                            color: fg,
+                            visualDensity: VisualDensity.compact,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                          ),
+                        ),
+                        BlocBuilder<CalculatorCubit, CalculatorState>(
+                          buildWhen: (p, c) => p.canRedo != c.canRedo,
+                          builder: (context, s) => IconButton(
+                            onPressed: s.canRedo ? () => context.read<CalculatorCubit>().redo() : null,
+                            icon: const Icon(Icons.redo_rounded, size: 19),
+                            color: fg,
+                            visualDensity: VisualDensity.compact,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen())),
+                          icon: const Icon(Icons.history_rounded, size: 20),
                           color: fg,
                           visualDensity: VisualDensity.compact,
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
                         ),
-                      ),
-                      // Redo
-                      BlocBuilder<CalculatorCubit, CalculatorState>(
-                        buildWhen: (p, c) => p.canRedo != c.canRedo,
-                        builder: (context, s) => IconButton(
-                          onPressed: s.canRedo ? () => context.read<CalculatorCubit>().redo() : null,
-                          icon: const Icon(Icons.redo_rounded, size: 20),
+                        IconButton(
+                          onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
+                          icon: const Icon(Icons.settings_rounded, size: 20),
                           color: fg,
                           visualDensity: VisualDensity.compact,
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
                         ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen())),
-                        icon: const Icon(Icons.history_rounded, size: 21),
-                        color: fg,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
-                        icon: const Icon(Icons.settings_rounded, size: 21),
-                        color: fg,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
 
-                // --- Display ---
+                // --- Display (compact, ~28% of screen) ---
                 Expanded(
                   flex: 3,
                   child: Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
                     decoration: BoxDecoration(
                       color: isDark ? ColorTokens.darkSurface : ColorTokens.lightSurface,
-                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
+                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(18)),
                     ),
                     child: const Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -186,7 +212,7 @@ class CalculatorScreen extends StatelessWidget {
                   ),
                 ),
 
-                // --- Keypad ---
+                // --- Keypad (gets remaining space) ---
                 Expanded(
                   flex: 5,
                   child: _KeypadArea(mode: state.mode),
@@ -231,22 +257,22 @@ class _KeypadArea extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.grid_on_rounded, size: 44, color: ColorTokens.accentBlue.withOpacity(0.5)),
-          const SizedBox(height: 12),
+          Icon(Icons.grid_on_rounded, size: 40, color: ColorTokens.accentBlue.withOpacity(0.5)),
+          const SizedBox(height: 10),
           ElevatedButton.icon(
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const MatrixEditorScreen())),
-            icon: const Icon(Icons.open_in_new, size: 18),
+            icon: const Icon(Icons.open_in_new, size: 16),
             label: const Text('Open Matrix Editor'),
             style: ElevatedButton.styleFrom(
               backgroundColor: ColorTokens.accentBlue,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
           const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: 20),
             child: MatrixKeypad(),
           ),
         ],
@@ -259,16 +285,16 @@ class _KeypadArea extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.analytics_rounded, size: 44, color: ColorTokens.accentGreen.withOpacity(0.5)),
-          const SizedBox(height: 12),
+          Icon(Icons.analytics_rounded, size: 40, color: ColorTokens.accentGreen.withOpacity(0.5)),
+          const SizedBox(height: 10),
           ElevatedButton.icon(
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const StatsInputScreen())),
-            icon: const Icon(Icons.table_chart, size: 18),
+            icon: const Icon(Icons.table_chart, size: 16),
             label: const Text('Open Data Entry'),
             style: ElevatedButton.styleFrom(
               backgroundColor: ColorTokens.accentGreen,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
@@ -282,16 +308,16 @@ class _KeypadArea extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.swap_horiz_rounded, size: 44, color: ColorTokens.accentPurple.withOpacity(0.5)),
-          const SizedBox(height: 12),
+          Icon(Icons.swap_horiz_rounded, size: 40, color: ColorTokens.accentPurple.withOpacity(0.5)),
+          const SizedBox(height: 10),
           ElevatedButton.icon(
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const UnitConverterScreen())),
-            icon: const Icon(Icons.open_in_new, size: 18),
+            icon: const Icon(Icons.open_in_new, size: 16),
             label: const Text('Open Unit Converter'),
             style: ElevatedButton.styleFrom(
               backgroundColor: ColorTokens.accentPurple,
               foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),

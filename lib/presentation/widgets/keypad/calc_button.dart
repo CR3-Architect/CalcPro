@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../../core/theme/color_tokens.dart';
 
-/// Cached text styles — built once, reused everywhere (major perf win)
+/// Cached text styles — built once, reused everywhere
 class CalcStyles {
   CalcStyles._();
 
@@ -12,57 +12,57 @@ class CalcStyles {
 
   static const TextStyle digit = TextStyle(
     fontFamily: mono,
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: FontWeight.w500,
     height: 1,
   );
 
   static const TextStyle operator_ = TextStyle(
     fontFamily: mono,
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: FontWeight.w600,
     height: 1,
   );
 
   static const TextStyle equals = TextStyle(
     fontFamily: mono,
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: FontWeight.w700,
     height: 1,
   );
 
   static const TextStyle clear = TextStyle(
     fontFamily: ui,
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: FontWeight.w600,
     height: 1,
   );
 
   static const TextStyle function = TextStyle(
     fontFamily: ui,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1,
   );
 
   static const TextStyle memory = TextStyle(
     fontFamily: ui,
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: FontWeight.w600,
-    letterSpacing: 0.5,
+    letterSpacing: 0.4,
     height: 1,
   );
 
   static const TextStyle scientific = TextStyle(
     fontFamily: ui,
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1,
   );
 
   static const TextStyle hexDigit = TextStyle(
     fontFamily: mono,
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: FontWeight.w600,
     height: 1,
   );
@@ -116,7 +116,7 @@ enum CalcButtonType {
   operatorOnDark,
 }
 
-/// Fast, smooth calculator button — InkWell + cached styles (no GoogleFonts per frame)
+/// Compact professional calculator button
 class CalcButton extends StatelessWidget {
   final String text;
   final CalcButtonType type;
@@ -124,6 +124,7 @@ class CalcButton extends StatelessWidget {
   final int flex;
   final IconData? icon;
   final bool isActive;
+  final double? height;
 
   const CalcButton({
     super.key,
@@ -133,6 +134,7 @@ class CalcButton extends StatelessWidget {
     this.flex = 1,
     this.icon,
     this.isActive = false,
+    this.height,
   });
 
   @override
@@ -142,20 +144,23 @@ class CalcButton extends StatelessWidget {
     return Expanded(
       flex: flex,
       child: Padding(
-        padding: const EdgeInsets.all(3),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
         child: Material(
           color: _bgColor(isDark),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(16),
           child: InkWell(
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(16),
             onTap: () {
               HapticFeedback.selectionClick();
               onPressed();
             },
-            child: Center(
-              child: icon != null
-                  ? Icon(icon, size: 22, color: _iconColor(isDark))
-                  : Text(text, style: CalcStyles.forType(type, isDark)),
+            child: SizedBox(
+              height: height,
+              child: Center(
+                child: icon != null
+                    ? Icon(icon, size: 20, color: _iconColor(isDark))
+                    : Text(text, style: CalcStyles.forType(type, isDark)),
+              ),
             ),
           ),
         ),
@@ -169,21 +174,15 @@ class CalcButton extends StatelessWidget {
         return isDark ? ColorTokens.darkSurfaceVariant : ColorTokens.lightSurfaceVariant;
       case CalcButtonType.operator:
       case CalcButtonType.operatorOnDark:
-        return isDark
-            ? ColorTokens.buttonOperator
-            : ColorTokens.buttonOperatorLight;
+        return isDark ? ColorTokens.buttonOperator : ColorTokens.buttonOperatorLight;
       case CalcButtonType.equals:
         return isDark ? ColorTokens.electricCyan : ColorTokens.buttonEqualsLight;
       case CalcButtonType.clear:
         return isDark ? ColorTokens.buttonClear : ColorTokens.buttonClearLight;
       case CalcButtonType.function:
-        return isDark
-            ? ColorTokens.darkSurface
-            : Colors.white;
+        return isDark ? ColorTokens.darkSurface : Colors.white;
       case CalcButtonType.memory:
-        return isDark
-            ? const Color(0xFF1C2128)
-            : const Color(0xFFEEF1F4);
+        return isDark ? const Color(0xFF1C2128) : const Color(0xFFEEF1F4);
       case CalcButtonType.scientific:
         return isDark
             ? ColorTokens.accentPurple.withOpacity(0.12)
