@@ -171,18 +171,18 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
         children: [
           // Dimension controls
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
             child: Row(
               children: [
-                Text('Rows:', style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
-                const SizedBox(width: 8),
+                Text('Rows', style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 13)),
+                const SizedBox(width: 4),
                 _buildDimensionButton(_rows, 10, (v) {
                   setState(() => _rows = v);
                   _initControllers();
                 }),
-                const SizedBox(width: 16),
-                Text('Cols:', style: GoogleFonts.inter(fontWeight: FontWeight.w500)),
                 const SizedBox(width: 8),
+                Text('Cols', style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 13)),
+                const SizedBox(width: 4),
                 _buildDimensionButton(_cols, 10, (v) {
                   setState(() => _cols = v);
                   _initControllers();
@@ -192,8 +192,11 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
                   onPressed: () {
                     _setMatrix(MatrixFunctions.createIdentity(_rows > _cols ? _rows : _cols));
                   },
-                  icon: const Icon(Icons.grid_on),
+                  icon: const Icon(Icons.grid_on, size: 20),
                   tooltip: 'Identity',
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                 ),
                 IconButton(
                   onPressed: () {
@@ -204,8 +207,11 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
                     }
                     setState(() {});
                   },
-                  icon: const Icon(Icons.close_fullscreen),
-                  tooltip: 'Set as diagonal',
+                  icon: const Icon(Icons.close_fullscreen, size: 20),
+                  tooltip: 'Diagonal',
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                 ),
               ],
             ),
@@ -214,8 +220,16 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
           // Matrix grid
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: _buildMatrixGrid(isDark),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: MediaQuery.of(context).size.width - 24,
+                  ),
+                  child: _buildMatrixGrid(isDark),
+                ),
+              ),
             ),
           ),
           
@@ -237,18 +251,20 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
           
           // Quick operations bar
           Container(
-            padding: const EdgeInsets.all(8),
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             color: isDark ? ColorTokens.darkSurface : ColorTokens.lightSurface,
             child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: 6,
+              runSpacing: 6,
+              alignment: WrapAlignment.center,
               children: [
                 _buildOpButton('Aᵀ', 'transpose'),
-                _buildOpButton('det(A)', 'determinant'),
+                _buildOpButton('det', 'determinant'),
                 _buildOpButton('A⁻¹', 'inverse'),
-                _buildOpButton('tr(A)', 'trace'),
-                _buildOpButton('rank(A)', 'rank'),
-                _buildOpButton('λ(A)', 'eigenvalues'),
+                _buildOpButton('tr', 'trace'),
+                _buildOpButton('rank', 'rank'),
+                _buildOpButton('λ', 'eigenvalues'),
                 _buildOpButton('I', 'identity'),
                 _buildOpButton('0', 'zero'),
               ],
@@ -263,30 +279,45 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        IconButton(
-          onPressed: value > 1 ? () => onChanged(value - 1) : null,
-          icon: const Icon(Icons.remove, size: 18),
-          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
-        ),
-        Text(
-          '$value',
-          style: GoogleFonts.jetBrainsMono(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
+        SizedBox(
+          width: 28,
+          height: 28,
+          child: IconButton(
+            onPressed: value > 1 ? () => onChanged(value - 1) : null,
+            icon: const Icon(Icons.remove, size: 16),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
           ),
         ),
-        IconButton(
-          onPressed: value < max ? () => onChanged(value + 1) : null,
-          icon: const Icon(Icons.add, size: 18),
-          constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+        SizedBox(
+          width: 24,
+          child: Text(
+            '$value',
+            textAlign: TextAlign.center,
+            style: GoogleFonts.jetBrainsMono(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ),
+        SizedBox(
+          width: 28,
+          height: 28,
+          child: IconButton(
+            onPressed: value < max ? () => onChanged(value + 1) : null,
+            icon: const Icon(Icons.add, size: 16),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
         ),
       ],
     );
   }
   
   Widget _buildMatrixGrid(bool isDark) {
+    final cellWidth = _cols > 5 ? 52.0 : 64.0;
     return Container(
-      padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
         border: Border.all(
           color: ColorTokens.electricCyan.withOpacity(0.3),
@@ -299,19 +330,21 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
         children: [
           for (int i = 0; i < _rows; i++)
             Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 for (int j = 0; j < _cols; j++)
-                  Expanded(
+                  SizedBox(
+                    width: cellWidth,
                     child: Padding(
                       padding: const EdgeInsets.all(2),
                       child: TextField(
                         controller: _controllers[i][j],
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.jetBrainsMono(fontSize: 14),
+                        style: GoogleFonts.jetBrainsMono(fontSize: 13),
                         decoration: InputDecoration(
                           isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
                           filled: true,
                           fillColor: isDark
                               ? ColorTokens.darkSurfaceVariant
@@ -333,10 +366,12 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
   
   Widget _buildOpButton(String label, String operation) {
     return ActionChip(
-      label: Text(label, style: GoogleFonts.jetBrainsMono(fontSize: 12)),
+      label: Text(label, style: GoogleFonts.jetBrainsMono(fontSize: 11)),
       onPressed: () => _applyOperation(operation),
       backgroundColor: ColorTokens.electricCyan.withOpacity(0.1),
       labelStyle: const TextStyle(color: ColorTokens.electricCyan),
+      visualDensity: VisualDensity.compact,
+      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
     );
   }
 }

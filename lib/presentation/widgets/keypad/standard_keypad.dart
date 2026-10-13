@@ -27,7 +27,7 @@ class _StandardKeypadState extends State<StandardKeypad> {
           onTap: () => setState(() => _expanded = !_expanded),
           behavior: HitTestBehavior.opaque,
           child: SizedBox(
-            height: 24,
+            height: 22,
             child: Center(
               child: AnimatedRotation(
                 turns: _expanded ? 0.5 : 0,
@@ -35,7 +35,7 @@ class _StandardKeypadState extends State<StandardKeypad> {
                 curve: Curves.easeOutCubic,
                 child: Icon(
                   Icons.keyboard_arrow_up_rounded,
-                  size: 24,
+                  size: 22,
                   color: ColorTokens.electricCyan.withOpacity(0.6),
                 ),
               ),
@@ -43,57 +43,51 @@ class _StandardKeypadState extends State<StandardKeypad> {
           ),
         ),
 
-        // --- Scientific panel ---
-        AnimatedSize(
-          duration: const Duration(milliseconds: 220),
-          curve: Curves.easeOutCubic,
-          alignment: Alignment.topCenter,
-          child: _expanded
-              ? SizedBox(
-                  height: 112,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Column(
+        // --- Scientific panel (shares space when open) ---
+        if (_expanded)
+          Expanded(
+            flex: 2,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Row(
                       children: [
-                        Expanded(
-                          child: Row(
-                            children: [
-                              CalcButton(text: 'sin', type: CalcButtonType.scientific, onPressed: () => cubit.inputFunction('sin(')),
-                              CalcButton(text: 'cos', type: CalcButtonType.scientific, onPressed: () => cubit.inputFunction('cos(')),
-                              CalcButton(text: 'tan', type: CalcButtonType.scientific, onPressed: () => cubit.inputFunction('tan(')),
-                              CalcButton(text: 'ln', type: CalcButtonType.scientific, onPressed: () => cubit.inputFunction('ln(')),
-                              CalcButton(text: 'log', type: CalcButtonType.scientific, onPressed: () => cubit.inputFunction('log(')),
-                            ],
-                          ),
-                        ),
-                        Expanded(
-                          child: Row(
-                            children: [
-                              CalcButton(text: '√', type: CalcButtonType.scientific, onPressed: () => cubit.inputFunction('sqrt(')),
-                              CalcButton(text: 'x²', type: CalcButtonType.scientific, onPressed: () {
-                                cubit.inputOperator('^');
-                                cubit.inputDigit('2');
-                              }),
-                              CalcButton(text: 'xʸ', type: CalcButtonType.scientific, onPressed: () => cubit.inputOperator('^')),
-                              CalcButton(text: 'n!', type: CalcButtonType.scientific, onPressed: () => cubit.inputOperator('!')),
-                              CalcButton(text: 'π', type: CalcButtonType.scientific, onPressed: () => cubit.inputConstant('π', 3.141592653589793)),
-                            ],
-                          ),
-                        ),
+                        CalcButton(text: 'sin', type: CalcButtonType.scientific, onPressed: () => cubit.inputFunction('sin(')),
+                        CalcButton(text: 'cos', type: CalcButtonType.scientific, onPressed: () => cubit.inputFunction('cos(')),
+                        CalcButton(text: 'tan', type: CalcButtonType.scientific, onPressed: () => cubit.inputFunction('tan(')),
+                        CalcButton(text: 'ln', type: CalcButtonType.scientific, onPressed: () => cubit.inputFunction('ln(')),
+                        CalcButton(text: 'log', type: CalcButtonType.scientific, onPressed: () => cubit.inputFunction('log(')),
                       ],
                     ),
                   ),
-                )
-              : const SizedBox(height: 0),
-        ),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        CalcButton(text: '√', type: CalcButtonType.scientific, onPressed: () => cubit.inputFunction('sqrt(')),
+                        CalcButton(text: 'x²', type: CalcButtonType.scientific, onPressed: () {
+                          cubit.inputOperator('^');
+                          cubit.inputDigit('2');
+                        }),
+                        CalcButton(text: 'xʸ', type: CalcButtonType.scientific, onPressed: () => cubit.inputOperator('^')),
+                        CalcButton(text: 'n!', type: CalcButtonType.scientific, onPressed: () => cubit.inputOperator('!')),
+                        CalcButton(text: 'π', type: CalcButtonType.scientific, onPressed: () => cubit.inputConstant('π', 3.141592653589793)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
 
         // --- Main 4x5 keypad ---
         Expanded(
+          flex: _expanded ? 5 : 7,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
             child: Column(
               children: [
-                // C, ⌫, %, ÷
                 Expanded(
                   child: Row(
                     children: [
@@ -104,7 +98,6 @@ class _StandardKeypadState extends State<StandardKeypad> {
                     ],
                   ),
                 ),
-                // 7 8 9 ×
                 Expanded(
                   child: Row(
                     children: [
@@ -115,7 +108,6 @@ class _StandardKeypadState extends State<StandardKeypad> {
                     ],
                   ),
                 ),
-                // 4 5 6 −
                 Expanded(
                   child: Row(
                     children: [
@@ -126,7 +118,6 @@ class _StandardKeypadState extends State<StandardKeypad> {
                     ],
                   ),
                 ),
-                // 1 2 3 +
                 Expanded(
                   child: Row(
                     children: [
@@ -137,7 +128,6 @@ class _StandardKeypadState extends State<StandardKeypad> {
                     ],
                   ),
                 ),
-                // ± 0 . =
                 Expanded(
                   child: Row(
                     children: [
