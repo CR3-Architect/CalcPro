@@ -12,35 +12,35 @@ class CalcStyles {
 
   static const TextStyle digit = TextStyle(
     fontFamily: mono,
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: FontWeight.w500,
     height: 1,
   );
 
   static const TextStyle operator_ = TextStyle(
     fontFamily: mono,
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: FontWeight.w600,
     height: 1,
   );
 
   static const TextStyle equals = TextStyle(
     fontFamily: mono,
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: FontWeight.w700,
     height: 1,
   );
 
   static const TextStyle clear = TextStyle(
     fontFamily: ui,
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: FontWeight.w600,
     height: 1,
   );
 
   static const TextStyle function = TextStyle(
     fontFamily: ui,
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: FontWeight.w500,
     height: 1,
   );
@@ -144,12 +144,13 @@ class CalcButton extends StatelessWidget {
     return Expanded(
       flex: flex,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
         child: Material(
           color: _bgColor(isDark),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
+          clipBehavior: Clip.antiAlias,
           child: InkWell(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
             onTap: () {
               HapticFeedback.selectionClick();
               onPressed();
@@ -158,7 +159,7 @@ class CalcButton extends StatelessWidget {
               height: height,
               child: Center(
                 child: icon != null
-                    ? Icon(icon, size: 20, color: _iconColor(isDark))
+                    ? Icon(icon, size: 18, color: _iconColor(isDark))
                     : Text(text, style: CalcStyles.forType(type, isDark)),
               ),
             ),

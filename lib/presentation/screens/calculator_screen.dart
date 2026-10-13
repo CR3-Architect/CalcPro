@@ -188,9 +188,9 @@ class CalculatorScreen extends StatelessWidget {
                   ),
                 ),
 
-                // --- Display (compact, ~28% of screen) ---
+                // --- Display (compact) ---
                 Expanded(
-                  flex: 3,
+                  flex: 2,
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.fromLTRB(20, 8, 20, 12),
@@ -212,9 +212,9 @@ class CalculatorScreen extends StatelessWidget {
                   ),
                 ),
 
-                // --- Keypad (gets remaining space) ---
+                // --- Keypad ---
                 Expanded(
-                  flex: 5,
+                  flex: 6,
                   child: _KeypadArea(mode: state.mode),
                 ),
               ],

@@ -12,18 +12,14 @@ import 'presentation/screens/calculator_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Load saved theme preference
   final prefs = await SharedPreferences.getInstance();
   final themeIndex = prefs.getInt('themeMode') ?? 0;
-  
   runApp(CalcProApp(initialThemeIndex: themeIndex));
 }
 
 /// CalcPro Studio Application
 class CalcProApp extends StatefulWidget {
   final int initialThemeIndex;
-  
   const CalcProApp({super.key, required this.initialThemeIndex});
 
   @override
@@ -31,74 +27,66 @@ class CalcProApp extends StatefulWidget {
 }
 
 class _CalcProAppState extends State<CalcProApp> {
-  late int _themeIndex;
-  late AppThemeMode _currentTheme;
-  
+  late final CalculatorCubit _calcCubit;
+  late final HistoryCubit _historyCubit;
+
+  // Cache themes so switching is instant (no re-creation each rebuild)
+  static final Map<String, ThemeData> _themeCache = {};
+
+  static ThemeData _cachedTheme(AppThemeMode mode, bool highContrast) {
+    final key = '${mode.name}_$highContrast';
+    return _themeCache.putIfAbsent(
+      key,
+      () => AppTheme.getTheme(mode, highContrast: highContrast),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    _themeIndex = widget.initialThemeIndex;
-    _currentTheme = AppThemeMode.values[_themeIndex.clamp(0, AppThemeMode.values.length - 1)];
+    _calcCubit = CalculatorCubit(initialThemeIndex: widget.initialThemeIndex);
+    _historyCubit = HistoryCubit();
   }
-  
-  void _onThemeChanged(int index) {
-    final clamped = index.clamp(0, AppThemeMode.values.length - 1);
-    setState(() {
-      _themeIndex = clamped;
-      _currentTheme = AppThemeMode.values[clamped];
-    });
+
+  @override
+  void dispose() {
+    _calcCubit.close();
+    _historyCubit.close();
+    super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider<CalculatorCubit>(
-          create: (_) => CalculatorCubit(initialThemeIndex: _themeIndex),
-        ),
-        BlocProvider<HistoryCubit>(
-          create: (_) => HistoryCubit(),
-        ),
+        BlocProvider<CalculatorCubit>.value(value: _calcCubit),
+        BlocProvider<HistoryCubit>.value(value: _historyCubit),
       ],
-      child: Builder(
-        builder: (context) {
-          // Sync history: when CalculatorCubit history changes, reload HistoryCubit
-          return BlocListener<CalculatorCubit, CalculatorState>(
-            listenWhen: (prev, curr) => prev.history != curr.history,
-            listener: (context, state) {
-              context.read<HistoryCubit>().loadHistory();
-            },
-            child: BlocListener<CalculatorCubit, CalculatorState>(
-              listenWhen: (prev, curr) => prev.themeIndex != curr.themeIndex,
-              listener: (context, state) {
-                _onThemeChanged(state.themeIndex);
-              },
-              child: BlocBuilder<CalculatorCubit, CalculatorState>(
-                buildWhen: (prev, curr) =>
-                    prev.themeIndex != curr.themeIndex ||
-                    prev.highContrastMode != curr.highContrastMode,
-                builder: (context, calcState) {
-                  return MaterialApp(
-                    title: 'CalcPro Studio',
-                    debugShowCheckedModeBanner: false,
-                    theme: AppTheme.getTheme(
-                      _currentTheme,
-                      highContrast: calcState.highContrastMode,
-                    ),
-                    localizationsDelegates: const [
-                      AppLocalizations.delegate,
-                      GlobalMaterialLocalizations.delegate,
-                      GlobalWidgetsLocalizations.delegate,
-                      GlobalCupertinoLocalizations.delegate,
-                    ],
-                    supportedLocales: AppLocalizations.supportedLocales,
-                    home: const CalculatorScreen(),
-                  );
-                },
-              ),
-            ),
-          );
-        },
+      child: BlocListener<CalculatorCubit, CalculatorState>(
+        listenWhen: (prev, curr) => prev.history != curr.history,
+        listener: (context, state) => _historyCubit.loadHistory(),
+        child: BlocBuilder<CalculatorCubit, CalculatorState>(
+          buildWhen: (prev, curr) =>
+              prev.themeIndex != curr.themeIndex ||
+              prev.highContrastMode != curr.highContrastMode,
+          builder: (context, calcState) {
+            final themeMode = AppThemeMode.values[
+                calcState.themeIndex.clamp(0, AppThemeMode.values.length - 1)];
+            return MaterialApp(
+              title: 'CalcPro',
+              debugShowCheckedModeBanner: false,
+              theme: _cachedTheme(themeMode, calcState.highContrastMode),
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+              supportedLocales: AppLocalizations.supportedLocales,
+              home: const CalculatorScreen(),
+            );
+          },
+        ),
       ),
     );
   }

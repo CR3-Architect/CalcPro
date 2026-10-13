@@ -277,13 +277,13 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   
   void toggleHapticFeedback() {
     final newValue = !state.hapticFeedback;
-    _savePreference('hapticFeedback', newValue ? 1 : 0);
+    _savePreference('hapticFeedback', newValue);
     emit(state.copyWith(hapticFeedback: newValue));
   }
-  
+
   void toggleHighContrast() {
     final newValue = !state.highContrastMode;
-    _savePreference('highContrast', newValue ? 1 : 0);
+    _savePreference('highContrast', newValue);
     emit(state.copyWith(highContrastMode: newValue));
   }
   
@@ -740,11 +740,11 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       final numberBaseIndex = prefs.getInt('numberBase') ?? 2;
       final precision = prefs.getInt('precision') ?? 0;
       final haptic = prefs.getBool('hapticFeedback') ?? true;
-      final highContrast = (prefs.getInt('highContrast') ?? 0) == 1;
-      
+      final highContrast = prefs.getBool('highContrast') ?? false;
+
       emit(state.copyWith(
-        angleMode: AngleMode.values[angleModeIndex],
-        numberBase: NumberBase.values[numberBaseIndex],
+        angleMode: AngleMode.values[angleModeIndex.clamp(0, AngleMode.values.length - 1)],
+        numberBase: NumberBase.values[numberBaseIndex.clamp(0, NumberBase.values.length - 1)],
         precision: precision,
         hapticFeedback: haptic,
         highContrastMode: highContrast,

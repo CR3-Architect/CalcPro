@@ -67,7 +67,9 @@ class SettingsScreen extends StatelessWidget {
                       style: TextStyle(color: subFg, fontSize: 13),
                     ),
                     value: state.highContrastMode,
-                    activeColor: ColorTokens.electricCyan,
+                    activeThumbColor: Colors.white,
+                    activeTrackColor: ColorTokens.electricCyan,
+                    inactiveThumbColor: subFg,
                     onChanged: (_) => context.read<CalculatorCubit>().toggleHighContrast(),
                   );
                 },
@@ -140,7 +142,9 @@ class SettingsScreen extends StatelessWidget {
                   subtitle: Text('Vibrate on press',
                       style: TextStyle(color: subFg, fontSize: 13)),
                   value: state.hapticFeedback,
-                  activeColor: ColorTokens.electricCyan,
+                  activeThumbColor: Colors.white,
+                  activeTrackColor: ColorTokens.electricCyan,
+                  inactiveThumbColor: subFg,
                   onChanged: (_) => context.read<CalculatorCubit>().toggleHapticFeedback(),
                 ),
               ),
@@ -207,6 +211,10 @@ class SettingsScreen extends StatelessWidget {
               value: entry.key,
               groupValue: current,
               activeColor: ColorTokens.electricCyan,
+              fillColor: WidgetStateProperty.resolveWith((states) =>
+                  states.contains(WidgetState.selected)
+                      ? ColorTokens.electricCyan
+                      : null),
               title: Text(entry.value.name[0].toUpperCase() + entry.value.name.substring(1),
                   style: TextStyle(
                       color: isDark
