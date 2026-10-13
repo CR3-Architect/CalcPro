@@ -14,6 +14,7 @@ import '../widgets/keypad/scientific_keypad.dart';
 import '../widgets/keypad/calculus_keypad.dart';
 import '../widgets/keypad/matrix_keypad.dart';
 import '../widgets/keypad/programmer_keypad.dart';
+import '../widgets/keypad/complex_keypad.dart';
 import '../widgets/mode_selector.dart';
 import 'history_screen.dart';
 import 'settings_screen.dart';
@@ -211,7 +212,7 @@ class _CalculatorScreenState extends State<CalculatorScreen>
           case CalcMode.matrix:
             return _buildMatrixSection(context);
           case CalcMode.complex:
-            return const ScientificKeypad(); // Reuse with complex buttons
+            return const ComplexKeypad();
           case CalcMode.stats:
             return _buildStatsSection(context);
           case CalcMode.programmer:
@@ -229,6 +230,11 @@ class _CalculatorScreenState extends State<CalculatorScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(Icons.grid_on_rounded, size: 48, color: ColorTokens.accentBlue.withOpacity(0.6)),
+          const SizedBox(height: 12),
+          Text(
+            'Matrix operations require the visual editor',
+            style: TextStyle(color: ColorTokens.accentBlue.withOpacity(0.8), fontSize: 13),
+          ),
           const SizedBox(height: 16),
           ElevatedButton.icon(
             onPressed: () => Navigator.push(
@@ -244,7 +250,7 @@ class _CalculatorScreenState extends State<CalculatorScreen>
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           const MatrixKeypad(),
         ],
       ),

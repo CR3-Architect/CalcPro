@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import '../ast/ast_node.dart';
 import '../../core/enums/angle_mode.dart';
+import '../functions/calculus_functions.dart';
 
 /// Numeric evaluation of AST nodes
 class ASTEvaluator implements ASTVisitor<double> {
@@ -54,8 +55,148 @@ class ASTEvaluator implements ASTVisitor<double> {
   
   @override
   double visitFunc(FuncNode node) {
+    final name = node.name.toLowerCase();
+    
+    // Calculus functions need AST access (unevaluated expression args)
+    if (_isCalculusFunction(name)) {
+      return _evalCalculus(name, node.arguments);
+    }
+    
     final args = node.arguments.map((a) => a.accept(this)).toList();
-    return _callFunction(node.name.toLowerCase(), args);
+    return _callFunction(name, args);
+  }
+  
+  bool _isCalculusFunction(String name) {
+    return name == 'derivative' ||
+        name == 'integrate' ||
+        name == 'limit' ||
+        name == 'limitleft' ||
+        name == 'limitright' ||
+        name == 'sum' ||
+        name == 'product' ||
+        name == 'taylor';
+  }
+  
+  double _evalCalculus(String name, List<ASTNode> argNodes) {
+    switch (name) {
+      case 'derivative':
+        // derivative(expr, x) or derivative(expr, x, point)
+        _requireArgs(name, argNodes, 2, 3);
+        final varName = _varName(argNodes[1]);
+        double x;
+        if (argNodes.length >= 3) {
+          x = argNodes[2].accept(this);
+        } else {
+          x = variables[varName] ?? 0;
+        }
+        return CalculusFunctions.derivative(
+          (t) => _evalWithVar(argNodes[0], varName, t),
+          x,
+        );
+      
+      case 'integrate':
+        // integrate(expr, x, a, b)
+        _requireArgs(name, argNodes, 4);
+        final varName = _varName(argNodes[1]);
+        final a = argNodes[2].accept(this);
+        final b = argNodes[3].accept(this);
+        return CalculusFunctions.integrate(
+          (t) => _evalWithVar(argNodes[0], varName, t),
+          a,
+          b,
+        );
+      
+      case 'limit':
+        // limit(expr, x, point)
+        _requireArgs(name, argNodes, 3);
+        final varName = _varName(argNodes[1]);
+        final point = argNodes[2].accept(this);
+        return CalculusFunctions.limit(
+          (t) => _evalWithVar(argNodes[0], varName, t),
+          point,
+        );
+      
+      case 'limitleft':
+        _requireArgs(name, argNodes, 3);
+        final varName = _varName(argNodes[1]);
+        final point = argNodes[2].accept(this);
+        return CalculusFunctions.limitLeft(
+          (t) => _evalWithVar(argNodes[0], varName, t),
+          point,
+        );
+      
+      case 'limitright':
+        _requireArgs(name, argNodes, 3);
+        final varName = _varName(argNodes[1]);
+        final point = argNodes[2].accept(this);
+        return CalculusFunctions.limitRight(
+          (t) => _evalWithVar(argNodes[0], varName, t),
+          point,
+        );
+      
+      case 'sum':
+        // sum(expr, k, start, end)
+        _requireArgs(name, argNodes, 4);
+        final varName = _varName(argNodes[1]);
+        final start = argNodes[2].accept(this).round();
+        final end = argNodes[3].accept(this).round();
+        return CalculusFunctions.summation(
+          (k) => _evalWithVar(argNodes[0], varName, k.toDouble()),
+          start,
+          end,
+        );
+      
+      case 'product':
+        _requireArgs(name, argNodes, 4);
+        final varName = _varName(argNodes[1]);
+        final start = argNodes[2].accept(this).round();
+        final end = argNodes[3].accept(this).round();
+        return CalculusFunctions.product(
+          (k) => _evalWithVar(argNodes[0], varName, k.toDouble()),
+          start,
+          end,
+        );
+      
+      case 'taylor':
+        // taylor(expr, x, a, terms)
+        _requireArgs(name, argNodes, 4);
+        final varName = _varName(argNodes[1]);
+        final x = argNodes[2].accept(this);
+        final terms = argNodes[3].accept(this).round();
+        return CalculusFunctions.taylorSeries(
+          (t) => _evalWithVar(argNodes[0], varName, t),
+          0,
+          x,
+          terms,
+        );
+      
+      default:
+        throw EvaluationException('Unknown calculus function: $name');
+    }
+  }
+  
+  String _varName(ASTNode node) {
+    if (node is VariableNode) return node.name;
+    throw EvaluationException('Expected variable name');
+  }
+  
+  void _requireArgs(String name, List<ASTNode> args, int min, [int? max]) {
+    final upper = max ?? min;
+    if (args.length < min || args.length > upper) {
+      throw EvaluationException(
+        '$name requires $min${min != upper ? '-$upper' : ''} arguments, got ${args.length}',
+      );
+    }
+  }
+  
+  double _evalWithVar(ASTNode expr, String varName, double value) {
+    final scope = {...variables, varName: value};
+    final child = ASTEvaluator(
+      angleMode: angleMode,
+      variables: scope,
+      memory: memory,
+    );
+    return child.evaluate(expr);
   }
   
   @override

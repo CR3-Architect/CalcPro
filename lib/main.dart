@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
 import 'presentation/bloc/calculator_cubit.dart';
+import 'presentation/bloc/calculator_state.dart';
 import 'presentation/bloc/history_cubit.dart';
 import 'presentation/screens/calculator_screen.dart';
 
@@ -37,13 +38,14 @@ class _CalcProAppState extends State<CalcProApp> {
   void initState() {
     super.initState();
     _themeIndex = widget.initialThemeIndex;
-    _currentTheme = AppThemeMode.values[_themeIndex];
+    _currentTheme = AppThemeMode.values[_themeIndex.clamp(0, AppThemeMode.values.length - 1)];
   }
   
   void _onThemeChanged(int index) {
+    final clamped = index.clamp(0, AppThemeMode.values.length - 1);
     setState(() {
-      _themeIndex = index;
-      _currentTheme = AppThemeMode.values[index];
+      _themeIndex = clamped;
+      _currentTheme = AppThemeMode.values[clamped];
     });
   }
   
@@ -52,7 +54,7 @@ class _CalcProAppState extends State<CalcProApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider<CalculatorCubit>(
-          create: (_) => CalculatorCubit(),
+          create: (_) => CalculatorCubit(initialThemeIndex: _themeIndex),
         ),
         BlocProvider<HistoryCubit>(
           create: (_) => HistoryCubit(),
@@ -60,45 +62,44 @@ class _CalcProAppState extends State<CalcProApp> {
       ],
       child: Builder(
         builder: (context) {
-          // Listen for theme changes from settings
-          return _ThemeScope(
-            themeIndex: _themeIndex,
-            onThemeChanged: _onThemeChanged,
-            child: MaterialApp(
-              title: 'CalcPro Studio',
-              debugShowCheckedModeBanner: false,
-              theme: AppTheme.getTheme(_currentTheme),
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              supportedLocales: AppLocalizations.supportedLocales,
-              home: const CalculatorScreen(),
+          // Sync history: when CalculatorCubit history changes, reload HistoryCubit
+          return BlocListener<CalculatorCubit, CalculatorState>(
+            listenWhen: (prev, curr) => prev.history != curr.history,
+            listener: (context, state) {
+              context.read<HistoryCubit>().loadHistory();
+            },
+            child: BlocListener<CalculatorCubit, CalculatorState>(
+              listenWhen: (prev, curr) => prev.themeIndex != curr.themeIndex,
+              listener: (context, state) {
+                _onThemeChanged(state.themeIndex);
+              },
+              child: BlocBuilder<CalculatorCubit, CalculatorState>(
+                buildWhen: (prev, curr) =>
+                    prev.themeIndex != curr.themeIndex ||
+                    prev.highContrastMode != curr.highContrastMode,
+                builder: (context, calcState) {
+                  return MaterialApp(
+                    title: 'CalcPro Studio',
+                    debugShowCheckedModeBanner: false,
+                    theme: AppTheme.getTheme(
+                      _currentTheme,
+                      highContrast: calcState.highContrastMode,
+                    ),
+                    localizationsDelegates: const [
+                      AppLocalizations.delegate,
+                      GlobalMaterialLocalizations.delegate,
+                      GlobalWidgetsLocalizations.delegate,
+                      GlobalCupertinoLocalizations.delegate,
+                    ],
+                    supportedLocales: AppLocalizations.supportedLocales,
+                    home: const CalculatorScreen(),
+                  );
+                },
+              ),
             ),
           );
         },
       ),
     );
-  }
-}
-
-/// Inherited widget to provide theme change callback
-class _ThemeScope extends InheritedWidget {
-  final int themeIndex;
-  final ValueChanged<int> onThemeChanged;
-  
-  const _ThemeScope({
-    required this.themeIndex,
-    required this.onThemeChanged,
-    required super.child,
-  });
-  
-
-  
-  @override
-  bool updateShouldNotify(_ThemeScope oldWidget) {
-    return themeIndex != oldWidget.themeIndex;
   }
 }

@@ -20,6 +20,7 @@ class CalculatorState {
   final List<CalculationEntry> history;
   final List<String> undoStack;
   final List<String> redoStack;
+  final int themeIndex;
   
   const CalculatorState({
     this.expression = '',
@@ -37,6 +38,7 @@ class CalculatorState {
     this.history = const [],
     this.undoStack = const [],
     this.redoStack = const [],
+    this.themeIndex = 0,
   });
   
   CalculatorState copyWith({
@@ -55,6 +57,7 @@ class CalculatorState {
     List<CalculationEntry>? history,
     List<String>? undoStack,
     List<String>? redoStack,
+    int? themeIndex,
   }) {
     return CalculatorState(
       expression: expression ?? this.expression,
@@ -72,6 +75,7 @@ class CalculatorState {
       history: history ?? this.history,
       undoStack: undoStack ?? this.undoStack,
       redoStack: redoStack ?? this.redoStack,
+      themeIndex: themeIndex ?? this.themeIndex,
     );
   }
   

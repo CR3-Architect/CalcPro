@@ -256,14 +256,21 @@ class AppTheme {
     );
   }
 
-  static ThemeData getTheme(AppThemeMode mode) {
-    switch (mode) {
-      case AppThemeMode.dark:
-        return darkTheme();
-      case AppThemeMode.light:
-        return lightTheme();
-      case AppThemeMode.amoled:
-        return amoledTheme();
-    }
+  static ThemeData getTheme(AppThemeMode mode, {bool highContrast = false}) {
+    final base = switch (mode) {
+      AppThemeMode.dark => darkTheme(),
+      AppThemeMode.light => lightTheme(),
+      AppThemeMode.amoled => amoledTheme(),
+    };
+    if (!highContrast) return base;
+    return base.copyWith(
+      textTheme: base.textTheme.apply(
+        bodyColor: Colors.white,
+        displayColor: Colors.white,
+        decorationColor: Colors.white,
+      ),
+      scaffoldBackgroundColor: mode == AppThemeMode.light ? Colors.white : Colors.black,
+      dividerColor: Colors.white70,
+    );
   }
 }

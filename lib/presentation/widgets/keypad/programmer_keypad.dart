@@ -124,8 +124,12 @@ class ProgrammerKeypad extends StatelessWidget {
             child: Row(
               children: [
                 CalcButton(text: '⌫', type: CalcButtonType.function, onPressed: () => cubit.backspace()),
-                CalcButton(text: 'pop', type: CalcButtonType.function, onPressed: () {}),
-                CalcButton(text: 'clz', type: CalcButtonType.function, onPressed: () {}),
+                CalcButton(text: 'pop', type: CalcButtonType.function, onPressed: () {
+                  cubit.inputFunction('popcount(');
+                }),
+                CalcButton(text: 'clz', type: CalcButtonType.function, onPressed: () {
+                  cubit.inputFunction('clz(');
+                }),
                 CalcButton(text: '±', type: CalcButtonType.function, onPressed: () => cubit.inputOperator('-')),
                 CalcButton(text: '=', type: CalcButtonType.equals, onPressed: () => cubit.evaluate()),
               ],

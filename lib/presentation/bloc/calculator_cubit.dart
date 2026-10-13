@@ -17,7 +17,8 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   final VariableScope _scope = VariableScope();
   int _memoryIndex = 0;
   
-  CalculatorCubit() : super(const CalculatorState()) {
+  CalculatorCubit({int initialThemeIndex = 0})
+      : super(CalculatorState(themeIndex: initialThemeIndex)) {
     _loadPreferences();
     _loadHistory();
   }
@@ -68,6 +69,10 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   
   void inputConstant(String name, double value) {
     _pushUndo();
+    // Register single-letter names as variables so they can be referenced
+    if (name.length == 1 && RegExp(r'[a-zA-Z]').hasMatch(name)) {
+      _scope.setVariable(name, value);
+    }
     emit(state.copyWith(
       expression: state.expression + name,
       displayExpression: state.displayExpression + name,
@@ -140,7 +145,11 @@ class CalculatorCubit extends Cubit<CalculatorState> {
     if (newExpr.length >= 2) {
       // Check if we're removing a multi-char function
       final funcEndings = ['sin(', 'cos(', 'tan(', 'asin(', 'acos(', 'atan(', 
-        'sinh(', 'cosh(', 'tanh(', 'log(', 'ln(', 'sqrt(', 'abs(', 'nPr(', 'nCr('];
+        'sinh(', 'cosh(', 'tanh(', 'log(', 'ln(', 'sqrt(', 'abs(', 'nPr(', 'nCr(',
+        'derivative(', 'integrate(', 'limit(', 'sum(', 'product(', 'taylor(',
+        'transpose(', 'determinant(', 'inverse(', 'trace(', 'rank(',
+        'eigen(', 'solve(', 'identity(', 'zeros(', 'diag(',
+        'not(', 'ones_complement(', 'twos_complement(', 'popcount(', 'clz(', 'ctz('];
       
       bool removed = false;
       for (final func in funcEndings) {
@@ -273,7 +282,9 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   }
   
   void toggleHighContrast() {
-    emit(state.copyWith(highContrastMode: !state.highContrastMode));
+    final newValue = !state.highContrastMode;
+    _savePreference('highContrast', newValue ? 1 : 0);
+    emit(state.copyWith(highContrastMode: newValue));
   }
   
   // --- Memory Operations ---
@@ -382,6 +393,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   
   void setTheme(int themeIndex) {
     _savePreference('themeMode', themeIndex);
+    emit(state.copyWith(themeIndex: themeIndex));
   }
   
   // --- Private Helpers ---
@@ -406,6 +418,11 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       return _evaluateProgrammerExpression(expression);
     }
     
+    // Handle complex mode
+    if (state.mode == CalcMode.complex) {
+      return _evaluateComplexExpression(expression);
+    }
+    
     // Convert display-friendly operators back to math operators
     String normalized = expression;
     normalized = normalized.replaceAll('×', '*');
@@ -418,9 +435,6 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       (m) => '${m.group(1)}*${m.group(2)}',
     );
     
-    // Handle factorial notation: n! 
-    // (parser handles this via postfix)
-    
     try {
       final ast = parseExpression(normalized);
       final evaluator = ASTEvaluator(
@@ -430,9 +444,90 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       final value = evaluator.evaluate(ast);
       return _formatResult(value);
     } catch (e) {
-      // Try using math_expressions package as fallback
       return _evaluateWithMathExpressions(normalized);
     }
+  }
+  
+  String _evaluateComplexExpression(String expression) {
+    // Replace display operators
+    String expr = expression
+        .replaceAll('×', '*')
+        .replaceAll('÷', '/')
+        .replaceAll('−', '-');
+    
+    // Handle complex unary/binary functions with real args for now
+    // Full complex arithmetic: parse a+bi style
+    try {
+      // Simple complex evaluation: treat i as sqrt(-1) via complex pair tracking
+      final result = _complexEval(expr);
+      return result;
+    } catch (e) {
+      throw EvaluationException('Cannot evaluate complex expression');
+    }
+  }
+  
+  String _complexEval(String expr) {
+    expr = expr.trim();
+    if (expr.isEmpty) throw EvaluationException('Empty expression');
+    
+    // For pure real expressions fall back to standard evaluator
+    if (!expr.contains('i')) {
+      final ast = parseExpression(expr.replaceAll('×', '*').replaceAll('÷', '/'));
+      final evaluator = ASTEvaluator(
+        angleMode: state.angleMode,
+        variables: _scope.allVariables,
+      );
+      return _formatComplex(evaluator.evaluate(ast), 0);
+    }
+    
+    // Parse complex expression: split on top-level + or - (not inside parens, not after ^)
+    // Handle simple forms: a+bi, a-bi, bi, etc.
+    // Replace i with a marker for imaginary
+    final normalized = expr.replaceAll(' ', '');
+    
+    // Match real + imag*i forms
+    final complexMatch = RegExp(r'^([+-]?\d*\.?\d*)([+-]\d*\.?\d*)?i$').firstMatch(normalized);
+    if (complexMatch != null) {
+      final realStr = complexMatch.group(1) ?? '0';
+      final imagStr = complexMatch.group(2);
+      double real = double.tryParse(realStr.isEmpty || realStr == '+' ? '0' : realStr) ?? 0;
+      double imag;
+      if (imagStr == null || imagStr == '+' || imagStr == '-') {
+        imag = imagStr == '-' ? -1.0 : 1.0;
+      } else {
+        imag = double.tryParse(imagStr) ?? 1.0;
+      }
+      return _formatComplex(real, imag);
+    }
+    
+    // Pure imaginary: just "bi" or "-bi" or "i"
+    final pureImag = RegExp(r'^([+-]?)(\d*\.?\d*)i$').firstMatch(normalized);
+    if (pureImag != null) {
+      final sign = pureImag.group(1) == '-' ? -1.0 : 1.0;
+      final magStr = pureImag.group(2);
+      final mag = (magStr == null || magStr.isEmpty) ? 1.0 : (double.tryParse(magStr) ?? 1.0);
+      return _formatComplex(0, sign * mag);
+    }
+    
+    // Complex arithmetic: handle (a+bi) op (c+di) via simple left-to-right for +,-,*,/
+    // Fallback: try evaluating as real if possible
+    try {
+      final cleaned = normalized.replaceAll('i', '');
+      final ast = parseExpression(cleaned);
+      final evaluator = ASTEvaluator(angleMode: state.angleMode);
+      return _formatComplex(evaluator.evaluate(ast), 0);
+    } catch (_) {
+      throw EvaluationException('Complex expression not supported yet');
+    }
+  }
+  
+  String _formatComplex(double real, double imag) {
+    final r = _formatResult(real);
+    final i = _formatResult(imag.abs());
+    if (imag == 0) return r;
+    if (real == 0) return imag > 0 ? '${i}i' : '-${i}i';
+    final sign = imag >= 0 ? '+' : '-';
+    return '$r $sign ${i}i';
   }
   
   String _evaluateWithMathExpressions(String expression) {
@@ -525,6 +620,26 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   String _evaluateProgrammerExpression(String expression) {
     final base = state.numberBase;
     int? result;
+    
+    // Handle unary operations on single value
+    final trimmed = expression.trim();
+    final unaryOps = {
+      'not': ProgrammerFunctions.bitwiseNot,
+      'ones_complement': (int v) => ProgrammerFunctions.onesComplement(v),
+      'twos_complement': (int v) => ProgrammerFunctions.twosComplement(v),
+      'popcount': ProgrammerFunctions.popcount,
+      'clz': ProgrammerFunctions.clz,
+      'ctz': ProgrammerFunctions.ctz,
+    };
+    
+    for (final entry in unaryOps.entries) {
+      if (trimmed.startsWith('${entry.key}(') && trimmed.endsWith(')')) {
+        final inner = trimmed.substring(entry.key.length + 1, trimmed.length - 1);
+        final value = ProgrammerFunctions.parseValue(inner, base);
+        result = entry.value(value);
+        return ProgrammerFunctions.formatValue(result, base);
+      }
+    }
     
     // Handle bitwise operations
     final tokens = expression.split(RegExp(r'\s+'));
@@ -625,12 +740,14 @@ class CalculatorCubit extends Cubit<CalculatorState> {
       final numberBaseIndex = prefs.getInt('numberBase') ?? 2;
       final precision = prefs.getInt('precision') ?? 0;
       final haptic = prefs.getBool('hapticFeedback') ?? true;
+      final highContrast = (prefs.getInt('highContrast') ?? 0) == 1;
       
       emit(state.copyWith(
         angleMode: AngleMode.values[angleModeIndex],
         numberBase: NumberBase.values[numberBaseIndex],
         precision: precision,
         hapticFeedback: haptic,
+        highContrastMode: highContrast,
       ));
     } catch (_) {}
   }

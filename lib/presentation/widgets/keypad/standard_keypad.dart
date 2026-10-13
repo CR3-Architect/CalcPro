@@ -35,9 +35,8 @@ class StandardKeypad extends StatelessWidget {
                 CalcButton(text: '%', type: CalcButtonType.function, onPressed: () => cubit.inputPercent()),
                 CalcButton(text: '√', type: CalcButtonType.function, onPressed: () => cubit.inputFunction('sqrt(')),
                 CalcButton(text: 'x²', type: CalcButtonType.function, onPressed: () {
-                  cubit.inputFunction('pow(');
+                  cubit.inputOperator('^');
                   cubit.inputDigit('2');
-                  cubit.inputOperator(')');
                 }),
                 CalcButton(text: '÷', type: CalcButtonType.operator, onPressed: () => cubit.inputOperator('/')),
                 CalcButton(text: '⌫', type: CalcButtonType.function, onPressed: () => cubit.backspace(), icon: Icons.backspace_outlined),

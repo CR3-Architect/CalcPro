@@ -59,13 +59,8 @@ class Lexer {
       
       final char = _input[_pos];
       
-      // Skip commas used as thousand separators in numbers
-      if (char == ',' && _pos + 1 < _input.length && 
-          RegExp(r'\d').hasMatch(_input[_pos - 1]) &&
-          RegExp(r'\d').hasMatch(_input[_pos + 1])) {
-        _pos++;
-        continue;
-      }
+      // Skip commas used as thousand separators ONLY inside number reading (_readNumber)
+      // Main-loop commas are always tokenized (function args, etc.)
       
       // Numbers (including decimals and negatives after operators)
       if (RegExp(r'[0-9]').hasMatch(char) || 
@@ -116,6 +111,10 @@ class Lexer {
           tokens.add(Token(TokenType.rightParen, ')', _pos));
           _pos++;
           break;
+        case ',':
+          tokens.add(Token(TokenType.comma, ',', _pos));
+          _pos++;
+          break;
         case '!':
           tokens.add(Token(TokenType.factorial, '!', _pos));
           _pos++;
@@ -155,9 +154,11 @@ class Lexer {
       } else if (RegExp(r'[0-9]').hasMatch(char)) {
         buffer.write(char);
         _pos++;
-      } else if (char == ',' && _pos + 1 < _input.length &&
-          RegExp(r'[0-9]').hasMatch(_input[_pos + 1])) {
-        _pos++; // Skip comma as thousand separator
+      } else if (char == ',' && _pos + 2 < _input.length &&
+          RegExp(r'[0-9]').hasMatch(_input[_pos + 1]) &&
+          RegExp(r'[0-9]').hasMatch(_input[_pos + 2]) &&
+          (_pos + 3 >= _input.length || !RegExp(r'[0-9]').hasMatch(_input[_pos + 3]))) {
+        _pos++; // Skip comma as thousand separator (groups of 3 digits only)
       } else {
         break;
       }
@@ -200,13 +201,31 @@ class Lexer {
     }
     
     final value = buffer.toString();
+    final lower = value.toLowerCase();
     
-    // Check for compound operators
-    if (value.toLowerCase() == 'npr') {
-      return Token(TokenType.nPr, 'nPr', start);
+    // Check for compound operators (only when NOT used as function call nPr(...))
+    // Also handle cases like "5nPr2" where digits follow the operator name
+    if (lower == 'npr' || lower == 'ncr') {
+      final type = lower == 'npr' ? TokenType.nPr : TokenType.nCr;
+      // If followed by '(' it's a function call: re-emit as identifier
+      int lookahead = _pos;
+      while (lookahead < _input.length && RegExp(r'[\s]').hasMatch(_input[lookahead])) {
+        lookahead++;
+      }
+      if (lookahead < _input.length && _input[lookahead] == '(') {
+        return Token(TokenType.identifier, value, start);
+      }
+      return Token(type, value, start);
     }
-    if (value.toLowerCase() == 'ncr') {
-      return Token(TokenType.nCr, 'nCr', start);
+    
+    // Handle "nPr2" / "nCr5" style: name followed by digits (e.g. from 5nPr2)
+    final opMatch = RegExp(r'^(npr|ncr)(\d)').firstMatch(lower);
+    if (opMatch != null) {
+      final opLen = opMatch.group(1)!.length;
+      // Rewind to just after the operator name
+      _pos = start + opLen;
+      final opType = opMatch.group(1) == 'npr' ? TokenType.nPr : TokenType.nCr;
+      return Token(opType, opMatch.group(1)!, start);
     }
     
     return Token(TokenType.identifier, value, start);

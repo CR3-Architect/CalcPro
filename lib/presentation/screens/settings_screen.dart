@@ -190,7 +190,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 title: Text('Professional Scientific Calculator'),
                 subtitle: Text(
                   'Built for BS-level Computer Science and Math students.\n'
-                  'Features: 8 calculator modes, 100+ units, LaTeX display.',
+                  'Features: 8 calculator modes, 100+ units, complex numbers, calculus.',
                 ),
                 isThreeLine: true,
               ),

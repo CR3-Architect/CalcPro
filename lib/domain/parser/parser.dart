@@ -31,13 +31,18 @@ class Parser {
     return left;
   }
   
-  /// Term: Power (('*' | '/' | '%') Power)*
+  /// Term: Power (('*' | '/' | '%' | nPr | nCr) Power)*
   ASTNode _parseTerm() {
     ASTNode left = _parsePower();
     
-    while (_match(TokenType.multiply) || _match(TokenType.divide) || _match(TokenType.modulo)) {
+    while (_match(TokenType.multiply) ||
+        _match(TokenType.divide) ||
+        _match(TokenType.modulo) ||
+        _match(TokenType.nPr) ||
+        _match(TokenType.nCr)) {
+      final prev = _previous().type;
       BinOperator op;
-      switch (_previous().type) {
+      switch (prev) {
         case TokenType.multiply:
           op = BinOperator.multiply;
           break;
@@ -46,6 +51,12 @@ class Parser {
           break;
         case TokenType.modulo:
           op = BinOperator.modulo;
+          break;
+        case TokenType.nPr:
+          op = BinOperator.nPr;
+          break;
+        case TokenType.nCr:
+          op = BinOperator.nCr;
           break;
         default:
           op = BinOperator.multiply;
