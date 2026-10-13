@@ -263,14 +263,24 @@ class AppTheme {
       AppThemeMode.amoled => amoledTheme(),
     };
     if (!highContrast) return base;
+    // High contrast: keep light theme text dark, only boost dark themes
+    if (mode == AppThemeMode.light) {
+      return base.copyWith(
+        textTheme: base.textTheme.apply(
+          bodyColor: Colors.black,
+          displayColor: Colors.black,
+          decorationColor: Colors.black,
+        ),
+        scaffoldBackgroundColor: Colors.white,
+      );
+    }
     return base.copyWith(
       textTheme: base.textTheme.apply(
         bodyColor: Colors.white,
         displayColor: Colors.white,
         decorationColor: Colors.white,
       ),
-      scaffoldBackgroundColor: mode == AppThemeMode.light ? Colors.white : Colors.black,
-      dividerColor: Colors.white70,
+      scaffoldBackgroundColor: Colors.black,
     );
   }
 }

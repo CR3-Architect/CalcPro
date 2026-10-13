@@ -1,8 +1,107 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/color_tokens.dart';
+
+/// Cached text styles — built once, reused everywhere (major perf win)
+class CalcStyles {
+  CalcStyles._();
+
+  static const String mono = 'Roboto Mono';
+  static const String ui = 'Inter';
+
+  static const TextStyle digit = TextStyle(
+    fontFamily: mono,
+    fontSize: 26,
+    fontWeight: FontWeight.w500,
+    height: 1,
+  );
+
+  static const TextStyle operator_ = TextStyle(
+    fontFamily: mono,
+    fontSize: 26,
+    fontWeight: FontWeight.w600,
+    height: 1,
+  );
+
+  static const TextStyle equals = TextStyle(
+    fontFamily: mono,
+    fontSize: 28,
+    fontWeight: FontWeight.w700,
+    height: 1,
+  );
+
+  static const TextStyle clear = TextStyle(
+    fontFamily: ui,
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    height: 1,
+  );
+
+  static const TextStyle function = TextStyle(
+    fontFamily: ui,
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    height: 1,
+  );
+
+  static const TextStyle memory = TextStyle(
+    fontFamily: ui,
+    fontSize: 13,
+    fontWeight: FontWeight.w600,
+    letterSpacing: 0.5,
+    height: 1,
+  );
+
+  static const TextStyle scientific = TextStyle(
+    fontFamily: ui,
+    fontSize: 15,
+    fontWeight: FontWeight.w500,
+    height: 1,
+  );
+
+  static const TextStyle hexDigit = TextStyle(
+    fontFamily: mono,
+    fontSize: 18,
+    fontWeight: FontWeight.w600,
+    height: 1,
+  );
+
+  static TextStyle forType(CalcButtonType type, bool isDark) {
+    final Color color;
+    switch (type) {
+      case CalcButtonType.digit:
+        color = isDark ? ColorTokens.darkOnBackground : ColorTokens.lightOnBackground;
+      case CalcButtonType.operator:
+      case CalcButtonType.operatorOnDark:
+        color = Colors.white;
+      case CalcButtonType.equals:
+        color = Colors.white;
+      case CalcButtonType.clear:
+        color = Colors.white;
+      case CalcButtonType.function:
+        color = isDark ? ColorTokens.accentBlue : ColorTokens.deepBlue;
+      case CalcButtonType.memory:
+        color = isDark ? ColorTokens.darkOnSurface : ColorTokens.lightOnSurface;
+      case CalcButtonType.scientific:
+        color = ColorTokens.accentPurple;
+      case CalcButtonType.hexDigit:
+        color = ColorTokens.accentBlue;
+    }
+
+    final base = switch (type) {
+      CalcButtonType.digit => digit,
+      CalcButtonType.operator || CalcButtonType.operatorOnDark => operator_,
+      CalcButtonType.equals => equals,
+      CalcButtonType.clear => clear,
+      CalcButtonType.function => function,
+      CalcButtonType.memory => memory,
+      CalcButtonType.scientific => scientific,
+      CalcButtonType.hexDigit => hexDigit,
+    };
+    return base.copyWith(color: color);
+  }
+}
 
 /// Button style types
 enum CalcButtonType {
@@ -17,15 +116,15 @@ enum CalcButtonType {
   operatorOnDark,
 }
 
-/// Reusable animated calculator button
-class CalcButton extends StatefulWidget {
+/// Fast, smooth calculator button — InkWell + cached styles (no GoogleFonts per frame)
+class CalcButton extends StatelessWidget {
   final String text;
   final CalcButtonType type;
   final VoidCallback onPressed;
   final int flex;
   final IconData? icon;
   final bool isActive;
-  
+
   const CalcButton({
     super.key,
     required this.text,
@@ -37,161 +136,72 @@ class CalcButton extends StatefulWidget {
   });
 
   @override
-  State<CalcButton> createState() => _CalcButtonState();
-}
-
-class _CalcButtonState extends State<CalcButton> {
-  bool _isPressed = false;
-  
-  @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Expanded(
-      flex: widget.flex,
+      flex: flex,
       child: Padding(
         padding: const EdgeInsets.all(3),
-        child: GestureDetector(
-          onTapDown: (_) => setState(() => _isPressed = true),
-          onTapUp: (_) {
-            setState(() => _isPressed = false);
-            HapticFeedback.lightImpact();
-            widget.onPressed();
-          },
-          onTapCancel: () => setState(() => _isPressed = false),
-          child: AnimatedScale(
-            scale: _isPressed ? 0.92 : 1.0,
-            duration: const Duration(milliseconds: 100),
-            curve: Curves.easeInOut,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 100),
-              height: double.infinity,
-              decoration: _getDecoration(isDark),
-              child: Center(
-                child: widget.icon != null
-                    ? Icon(widget.icon, size: 22, color: _getIconColor(isDark))
-                    : Text(widget.text, style: _getTextStyle(isDark)),
-              ),
+        child: Material(
+          color: _bgColor(isDark),
+          borderRadius: BorderRadius.circular(14),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: () {
+              HapticFeedback.selectionClick();
+              onPressed();
+            },
+            child: Center(
+              child: icon != null
+                  ? Icon(icon, size: 22, color: _iconColor(isDark))
+                  : Text(text, style: CalcStyles.forType(type, isDark)),
             ),
           ),
         ),
       ),
     );
   }
-  
-  BoxDecoration _getDecoration(bool isDark) {
-    Color bgColor;
-    
-    switch (widget.type) {
+
+  Color _bgColor(bool isDark) {
+    switch (type) {
       case CalcButtonType.digit:
-        bgColor = isDark ? ColorTokens.darkSurfaceVariant : ColorTokens.lightSurfaceVariant;
-        break;
+        return isDark ? ColorTokens.darkSurfaceVariant : ColorTokens.lightSurfaceVariant;
       case CalcButtonType.operator:
-        bgColor = isDark 
-            ? ColorTokens.buttonOperator.withOpacity(0.7)
-            : ColorTokens.buttonOperatorLight;
-        break;
       case CalcButtonType.operatorOnDark:
-        bgColor = ColorTokens.buttonOperator.withOpacity(0.7);
-        break;
+        return isDark
+            ? ColorTokens.buttonOperator
+            : ColorTokens.buttonOperatorLight;
       case CalcButtonType.equals:
-        bgColor = isDark ? ColorTokens.electricCyan : ColorTokens.buttonEqualsLight;
-        break;
+        return isDark ? ColorTokens.electricCyan : ColorTokens.buttonEqualsLight;
       case CalcButtonType.clear:
-        bgColor = isDark ? ColorTokens.buttonClear.withOpacity(0.8) : ColorTokens.buttonClearLight;
-        break;
+        return isDark ? ColorTokens.buttonClear : ColorTokens.buttonClearLight;
       case CalcButtonType.function:
-        bgColor = isDark
-            ? ColorTokens.darkSurface.withOpacity(0.8)
-            : ColorTokens.lightSurface.withOpacity(0.9);
-        break;
+        return isDark
+            ? ColorTokens.darkSurface
+            : Colors.white;
       case CalcButtonType.memory:
-        bgColor = isDark
-            ? ColorTokens.darkSurface.withOpacity(0.6)
-            : ColorTokens.lightSurface.withOpacity(0.7);
-        break;
+        return isDark
+            ? const Color(0xFF1C2128)
+            : const Color(0xFFEEF1F4);
       case CalcButtonType.scientific:
-        bgColor = isDark
-            ? ColorTokens.accentPurple.withOpacity(0.15)
-            : ColorTokens.accentPurple.withOpacity(0.1);
-        break;
+        return isDark
+            ? ColorTokens.accentPurple.withOpacity(0.12)
+            : ColorTokens.accentPurple.withOpacity(0.08);
       case CalcButtonType.hexDigit:
-        bgColor = isDark
-            ? ColorTokens.accentBlue.withOpacity(0.15)
-            : ColorTokens.accentBlue.withOpacity(0.1);
-        break;
+        return isDark
+            ? ColorTokens.accentBlue.withOpacity(0.12)
+            : ColorTokens.accentBlue.withOpacity(0.08);
     }
-    
-    return BoxDecoration(
-      color: bgColor,
-      borderRadius: BorderRadius.circular(12),
-      boxShadow: _isPressed
-          ? []
-          : [
-              BoxShadow(
-                color: Colors.black.withOpacity(isDark ? 0.2 : 0.05),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
-            ],
-    );
   }
-  
-  Color _getIconColor(bool isDark) {
-    switch (widget.type) {
+
+  Color _iconColor(bool isDark) {
+    switch (type) {
       case CalcButtonType.clear:
       case CalcButtonType.equals:
         return Colors.white;
       default:
         return isDark ? ColorTokens.darkOnBackground : ColorTokens.lightOnBackground;
     }
-  }
-  
-  TextStyle _getTextStyle(bool isDark) {
-    Color textColor;
-    double fontSize = 20;
-    
-    switch (widget.type) {
-      case CalcButtonType.digit:
-        textColor = isDark ? ColorTokens.darkOnBackground : ColorTokens.lightOnBackground;
-        fontSize = 22;
-        break;
-      case CalcButtonType.operator:
-      case CalcButtonType.operatorOnDark:
-        textColor = Colors.white;
-        fontSize = 22;
-        break;
-      case CalcButtonType.equals:
-        textColor = Colors.white;
-        fontSize = 24;
-        break;
-      case CalcButtonType.clear:
-        textColor = Colors.white;
-        fontSize = 18;
-        break;
-      case CalcButtonType.function:
-        textColor = isDark ? ColorTokens.accentBlue : ColorTokens.deepBlue;
-        fontSize = 14;
-        break;
-      case CalcButtonType.memory:
-        textColor = isDark ? ColorTokens.darkOnSurface : ColorTokens.lightOnSurface;
-        fontSize = 12;
-        break;
-      case CalcButtonType.scientific:
-        textColor = ColorTokens.accentPurple;
-        fontSize = 14;
-        break;
-      case CalcButtonType.hexDigit:
-        textColor = ColorTokens.accentBlue;
-        fontSize = 16;
-        break;
-    }
-    
-    return GoogleFonts.jetBrainsMono(
-      fontSize: fontSize,
-      fontWeight: widget.type == CalcButtonType.equals ? FontWeight.w700 : FontWeight.w500,
-      color: textColor,
-    );
   }
 }
