@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 
@@ -39,7 +38,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       appBar: AppBar(
         title: Text(
           'History',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+          style: TextStyle(fontWeight: FontWeight.w600),
         ),
         actions: [
           IconButton(
@@ -128,7 +127,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           _searchQuery.isNotEmpty
                               ? 'No matching calculations'
                               : 'No history yet',
-                          style: GoogleFonts.inter(
+                          style: TextStyle(
                             fontSize: 16,
                             color: (isDark ? ColorTokens.darkOnSurface : ColorTokens.lightOnSurface)
                                 .withOpacity(0.5),
@@ -195,7 +194,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   Expanded(
                     child: Text(
                       entry.expression,
-                      style: GoogleFonts.jetBrainsMono(
+                      style: TextStyle(fontFamily: 'monospace', 
                         fontSize: 14,
                         color: (isDark ? ColorTokens.darkOnSurface : ColorTokens.lightOnSurface)
                             .withOpacity(0.7),
@@ -224,7 +223,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               const SizedBox(height: 4),
               Text(
                 '= ${entry.result}',
-                style: GoogleFonts.jetBrainsMono(
+                style: TextStyle(fontFamily: 'monospace', 
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                   color: isDark ? ColorTokens.darkOnBackground : ColorTokens.lightOnBackground,
@@ -235,7 +234,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 children: [
                   Text(
                     entry.mode,
-                    style: GoogleFonts.inter(
+                    style: TextStyle(
                       fontSize: 11,
                       color: ColorTokens.electricCyan,
                     ),
@@ -243,7 +242,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   const SizedBox(width: 8),
                   Text(
                     _formatTimestamp(entry.timestamp),
-                    style: GoogleFonts.inter(
+                    style: TextStyle(
                       fontSize: 11,
                       color: (isDark ? ColorTokens.darkOnSurface : ColorTokens.lightOnSurface)
                           .withOpacity(0.4),

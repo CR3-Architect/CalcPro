@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/theme/color_tokens.dart';
 import '../../domain/functions/matrix_functions.dart';
@@ -149,7 +148,7 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
       appBar: AppBar(
         title: Text(
           'Matrix Editor',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+          style: TextStyle(fontWeight: FontWeight.w600),
         ),
         actions: [
           PopupMenuButton<String>(
@@ -174,14 +173,14 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
             child: Row(
               children: [
-                Text('Rows', style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 13)),
+                Text('Rows', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
                 const SizedBox(width: 4),
                 _buildDimensionButton(_rows, 10, (v) {
                   setState(() => _rows = v);
                   _initControllers();
                 }),
                 const SizedBox(width: 8),
-                Text('Cols', style: GoogleFonts.inter(fontWeight: FontWeight.w500, fontSize: 13)),
+                Text('Cols', style: TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
                 const SizedBox(width: 4),
                 _buildDimensionButton(_cols, 10, (v) {
                   setState(() => _cols = v);
@@ -241,7 +240,7 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
               color: isDark ? ColorTokens.darkSurface : ColorTokens.lightSurface,
               child: Text(
                 _result,
-                style: GoogleFonts.jetBrainsMono(
+                style: TextStyle(fontFamily: 'monospace', 
                   fontSize: 16,
                   color: ColorTokens.electricCyan,
                 ),
@@ -294,7 +293,7 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
           child: Text(
             '$value',
             textAlign: TextAlign.center,
-            style: GoogleFonts.jetBrainsMono(
+            style: TextStyle(fontFamily: 'monospace', 
               fontSize: 14,
               fontWeight: FontWeight.w700,
             ),
@@ -341,7 +340,7 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
                         controller: _controllers[i][j],
                         keyboardType: TextInputType.number,
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.jetBrainsMono(fontSize: 13),
+                        style: TextStyle(fontFamily: 'monospace', fontSize: 13),
                         decoration: InputDecoration(
                           isDense: true,
                           contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
@@ -366,7 +365,7 @@ class _MatrixEditorScreenState extends State<MatrixEditorScreen> {
   
   Widget _buildOpButton(String label, String operation) {
     return ActionChip(
-      label: Text(label, style: GoogleFonts.jetBrainsMono(fontSize: 11)),
+      label: Text(label, style: TextStyle(fontFamily: 'monospace', fontSize: 11)),
       onPressed: () => _applyOperation(operation),
       backgroundColor: ColorTokens.electricCyan.withOpacity(0.1),
       labelStyle: const TextStyle(color: ColorTokens.electricCyan),

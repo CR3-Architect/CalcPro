@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../core/theme/color_tokens.dart';
 import '../../bloc/calculator_cubit.dart';
@@ -39,7 +38,7 @@ class HistoryTape extends StatelessWidget {
                   children: [
                     Text(
                       entry.expression,
-                      style: GoogleFonts.jetBrainsMono(
+                      style: TextStyle(fontFamily: 'monospace', 
                         fontSize: 12,
                         color: (isDark ? ColorTokens.darkOnSurface : ColorTokens.lightOnSurface)
                             .withOpacity(0.4),
@@ -50,7 +49,7 @@ class HistoryTape extends StatelessWidget {
                     const SizedBox(width: 4),
                     Text(
                       '= ${entry.result}',
-                      style: GoogleFonts.jetBrainsMono(
+                      style: TextStyle(fontFamily: 'monospace', 
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: (isDark ? ColorTokens.darkOnSurface : ColorTokens.lightOnSurface)

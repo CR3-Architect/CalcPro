@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/theme/color_tokens.dart';
 import '../../domain/functions/stats_functions.dart';
@@ -266,7 +265,7 @@ Var = ${(n * p * (1 - p)).toStringAsFixed(4)}
       appBar: AppBar(
         title: Text(
           'Statistics & Probability',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+          style: TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
       body: ListView(
@@ -354,7 +353,7 @@ Var = ${(n * p * (1 - p)).toStringAsFixed(4)}
                 _selectedTest.contains('Distribution') || _selectedTest.contains('Random')
                     ? 'Open Tool'
                     : 'Calculate Statistics',
-                style: GoogleFonts.inter(fontWeight: FontWeight.w600, fontSize: 16),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
               ),
             ),
           ),
@@ -377,7 +376,7 @@ Var = ${(n * p * (1 - p)).toStringAsFixed(4)}
                         const SizedBox(width: 8),
                         Text(
                           'Results',
-                          style: GoogleFonts.inter(
+                          style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 16,
                           ),
@@ -397,7 +396,7 @@ Var = ${(n * p * (1 - p)).toStringAsFixed(4)}
                     const Divider(),
                     Text(
                       _results,
-                      style: GoogleFonts.jetBrainsMono(fontSize: 13),
+                      style: TextStyle(fontFamily: 'monospace', fontSize: 13),
                     ),
                   ],
                 ),
@@ -410,7 +409,7 @@ Var = ${(n * p * (1 - p)).toStringAsFixed(4)}
           if (_data.isNotEmpty)
             Text(
               '${_data.length} data points loaded',
-              style: GoogleFonts.inter(
+              style: TextStyle(
                 fontSize: 12,
                 color: ColorTokens.electricCyan,
               ),

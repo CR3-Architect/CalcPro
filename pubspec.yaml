@@ -14,7 +14,6 @@ dependencies:
     sdk: flutter
   vector_math: ^2.1.4
   flutter_bloc: ^8.1.6
-  google_fonts: ^6.2.1
   shared_preferences: ^2.2.3
   intl: ^0.20.2
   share_plus: ^10.1.4
@@ -28,6 +27,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/icons/
-    - assets/fonts/

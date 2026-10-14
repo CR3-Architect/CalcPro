@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
 
 import '../../core/theme/color_tokens.dart';
@@ -163,7 +162,7 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
       appBar: AppBar(
         title: Text(
           _showConstants ? 'Physical Constants' : 'Unit Converter',
-          style: GoogleFonts.inter(fontWeight: FontWeight.w600),
+          style: TextStyle(fontWeight: FontWeight.w600),
         ),
         actions: [
           IconButton(
@@ -216,7 +215,7 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
           controller: _inputController,
           keyboardType: TextInputType.number,
           onChanged: (_) => _convert(),
-          style: GoogleFonts.jetBrainsMono(fontSize: 24),
+          style: TextStyle(fontFamily: 'monospace', fontSize: 24),
           decoration: InputDecoration(
             labelText: 'Value',
             filled: true,
@@ -279,7 +278,7 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
               children: [
                 Text(
                   '${_inputController.text} $_fromUnit',
-                  style: GoogleFonts.inter(
+                  style: TextStyle(
                     fontSize: 16,
                     color: (isDark ? ColorTokens.darkOnSurface : ColorTokens.lightOnSurface)
                         .withOpacity(0.6),
@@ -289,7 +288,7 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
                 const SizedBox(height: 8),
                 Text(
                   _formatResult(_result),
-                  style: GoogleFonts.jetBrainsMono(
+                  style: TextStyle(fontFamily: 'monospace', 
                     fontSize: 32,
                     fontWeight: FontWeight.w700,
                     color: ColorTokens.electricCyan,
@@ -298,7 +297,7 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
                 const SizedBox(height: 4),
                 Text(
                   _toUnit,
-                  style: GoogleFonts.inter(
+                  style: TextStyle(
                     fontSize: 16,
                     color: (isDark ? ColorTokens.darkOnSurface : ColorTokens.lightOnSurface)
                         .withOpacity(0.6),
@@ -348,7 +347,7 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
       items: items.map((unit) {
         return DropdownMenuItem(
           value: unit,
-          child: Text(unit, style: GoogleFonts.inter()),
+          child: Text(unit, style: TextStyle()),
         );
       }).toList(),
       onChanged: onChanged,
@@ -376,7 +375,7 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
               child: Center(
                 child: Text(
                   entry.value['symbol']!,
-                  style: GoogleFonts.jetBrainsMono(
+                  style: TextStyle(fontFamily: 'monospace', 
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: ColorTokens.electricCyan,
@@ -384,10 +383,10 @@ class _UnitConverterScreenState extends State<UnitConverterScreen> {
                 ),
               ),
             ),
-            title: Text(entry.key, style: GoogleFonts.inter(fontSize: 14)),
+            title: Text(entry.key, style: TextStyle(fontSize: 14)),
             subtitle: Text(
               '${entry.value['value']} ${entry.value['unit']}',
-              style: GoogleFonts.jetBrainsMono(fontSize: 12),
+              style: TextStyle(fontFamily: 'monospace', fontSize: 12),
             ),
             onTap: () {
               Clipboard.setData(ClipboardData(text: '${entry.value['value']} ${entry.value['unit']}'));
