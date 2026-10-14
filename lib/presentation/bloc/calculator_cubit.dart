@@ -27,6 +27,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   
   void inputDigit(String digit) {
     _pushUndo();
+    _hapticFeedback();
     emit(state.copyWith(
       expression: state.expression + digit,
       displayExpression: state.displayExpression + digit,
@@ -37,6 +38,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   
   void inputOperator(String op) {
     _pushUndo();
+    _hapticFeedback();
     final displayOp = _convertOperatorDisplay(op);
     emit(state.copyWith(
       expression: state.expression + op,
@@ -48,6 +50,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   
   void inputFunction(String func) {
     _pushUndo();
+    _hapticFeedback();
     String expr;
     String display;
     
@@ -69,6 +72,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   
   void inputConstant(String name, double value) {
     _pushUndo();
+    _hapticFeedback();
     // Register single-letter names as variables so they can be referenced
     if (name.length == 1 && RegExp(r'[a-zA-Z]').hasMatch(name)) {
       _scope.setVariable(name, value);
@@ -83,6 +87,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   
   void inputParenthesis(String paren) {
     _pushUndo();
+    _hapticFeedback();
     emit(state.copyWith(
       expression: state.expression + paren,
       displayExpression: state.displayExpression + paren,
@@ -93,6 +98,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   
   void inputDecimal() {
     _pushUndo();
+    _hapticFeedback();
     emit(state.copyWith(
       expression: state.expression + '.',
       displayExpression: state.displayExpression + '.',
@@ -102,6 +108,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   
   void inputPercent() {
     _pushUndo();
+    _hapticFeedback();
     emit(state.copyWith(
       expression: state.expression + '%',
       displayExpression: state.displayExpression + '%',
@@ -114,6 +121,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   
   void clearAll() {
     _pushUndo();
+    _hapticFeedback();
     emit(state.copyWith(
       expression: '',
       displayExpression: '',
@@ -124,6 +132,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   
   void clearEntry() {
     _pushUndo();
+    _hapticFeedback();
     // Remove the last number entered
     final newExpr = state.expression.replaceAll(RegExp(r'[\d.]+$'), '');
     final newDisplay = state.displayExpression.replaceAll(RegExp(r'[\d.]+$'), '');
@@ -138,6 +147,7 @@ class CalculatorCubit extends Cubit<CalculatorState> {
   void backspace() {
     if (state.expression.isEmpty) return;
     _pushUndo();
+    _hapticFeedback();
     
     String newExpr = state.expression;
     String newDisplay = state.displayExpression;
