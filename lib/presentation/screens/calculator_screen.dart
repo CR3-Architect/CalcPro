@@ -300,7 +300,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
                 // --- Display (compact) ---
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: RepaintBoundary(
                     key: _displayKey,
                     child: Container(
@@ -327,7 +327,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
 
                 // --- Keypad ---
                 Expanded(
-                  flex: 6,
+                  flex: 5,
                   child: _KeypadArea(mode: state.mode),
                 ),
               ],

@@ -94,35 +94,34 @@ class _StandardKeypadState extends State<StandardKeypad> {
             SizedBox(
               height: mainH,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _fixedRow([
+                    _row([
                       CalcButton(text: 'AC', type: CalcButtonType.clear, onPressed: () => cubit.clearAll()),
                       CalcButton(icon: Icons.backspace_outlined, text: '', type: CalcButtonType.function, onPressed: () => cubit.backspace()),
                       CalcButton(text: '%', type: CalcButtonType.function, onPressed: () => cubit.inputPercent()),
                       CalcButton(text: '÷', type: CalcButtonType.operator, onPressed: () => cubit.inputOperator('/')),
                     ]),
-                    _fixedRow([
+                    _row([
                       CalcButton(text: '7', type: CalcButtonType.digit, onPressed: () => cubit.inputDigit('7')),
                       CalcButton(text: '8', type: CalcButtonType.digit, onPressed: () => cubit.inputDigit('8')),
                       CalcButton(text: '9', type: CalcButtonType.digit, onPressed: () => cubit.inputDigit('9')),
                       CalcButton(text: '×', type: CalcButtonType.operator, onPressed: () => cubit.inputOperator('*')),
                     ]),
-                    _fixedRow([
+                    _row([
                       CalcButton(text: '4', type: CalcButtonType.digit, onPressed: () => cubit.inputDigit('4')),
                       CalcButton(text: '5', type: CalcButtonType.digit, onPressed: () => cubit.inputDigit('5')),
                       CalcButton(text: '6', type: CalcButtonType.digit, onPressed: () => cubit.inputDigit('6')),
                       CalcButton(text: '−', type: CalcButtonType.operator, onPressed: () => cubit.inputOperator('-')),
                     ]),
-                    _fixedRow([
+                    _row([
                       CalcButton(text: '1', type: CalcButtonType.digit, onPressed: () => cubit.inputDigit('1')),
                       CalcButton(text: '2', type: CalcButtonType.digit, onPressed: () => cubit.inputDigit('2')),
                       CalcButton(text: '3', type: CalcButtonType.digit, onPressed: () => cubit.inputDigit('3')),
                       CalcButton(text: '+', type: CalcButtonType.operator, onPressed: () => cubit.inputOperator('+')),
                     ]),
-                    _fixedRow([
+                    _row([
                       CalcButton(text: '±', type: CalcButtonType.function, onPressed: () => cubit.inputOperator('-')),
                       CalcButton(text: '0', type: CalcButtonType.digit, onPressed: () => cubit.inputDigit('0')),
                       CalcButton(text: '.', type: CalcButtonType.digit, onPressed: () => cubit.inputDecimal()),
@@ -139,6 +138,4 @@ class _StandardKeypadState extends State<StandardKeypad> {
   }
 
   Widget _row(List<Widget> children) => Expanded(child: Row(children: children));
-
-  Widget _fixedRow(List<Widget> children) => SizedBox(height: 46, child: Row(children: children));
 }
