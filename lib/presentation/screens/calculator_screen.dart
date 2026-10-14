@@ -38,72 +38,157 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final fg = isDark ? ColorTokens.darkOnBackground : ColorTokens.lightOnBackground;
     final subFg = isDark ? ColorTokens.darkOnSurface : ColorTokens.lightOnSurface;
+    final surface = isDark ? ColorTokens.darkSurface : ColorTokens.lightSurface;
+    final surfaceVar = isDark ? ColorTokens.darkSurfaceVariant : ColorTokens.lightSurfaceVariant;
+
+    final icons = <CalcMode, IconData>{
+      CalcMode.standard: Icons.calculate_outlined,
+      CalcMode.scientific: Icons.science_outlined,
+      CalcMode.calculus: Icons.functions,
+      CalcMode.matrix: Icons.grid_on_rounded,
+      CalcMode.complex: Icons.all_inclusive_rounded,
+      CalcMode.stats: Icons.bar_chart_rounded,
+      CalcMode.programmer: Icons.code_rounded,
+      CalcMode.unitConverter: Icons.swap_horiz_rounded,
+      CalcMode.currency: Icons.currency_exchange_rounded,
+    };
+
+    final colors = <CalcMode, Color>{
+      CalcMode.standard: ColorTokens.electricCyan,
+      CalcMode.scientific: ColorTokens.accentPurple,
+      CalcMode.calculus: ColorTokens.accentBlue,
+      CalcMode.matrix: ColorTokens.accentGreen,
+      CalcMode.complex: ColorTokens.accentPink,
+      CalcMode.stats: ColorTokens.accentOrange,
+      CalcMode.programmer: ColorTokens.accentYellow,
+      CalcMode.unitConverter: ColorTokens.accentPurple,
+      CalcMode.currency: ColorTokens.accentOrange,
+    };
 
     showModalBottomSheet<void>(
       context: context,
-      backgroundColor: isDark ? ColorTokens.darkSurface : ColorTokens.lightSurface,
+      backgroundColor: surface,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (sheetCtx) {
         return SafeArea(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(sheetCtx).size.height * 0.55,
+              maxHeight: MediaQuery.of(sheetCtx).size.height * 0.6,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Drag handle
                 Padding(
                   padding: const EdgeInsets.only(top: 12),
                   child: Container(
-                    width: 36,
+                    width: 40,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: Colors.grey.withOpacity(0.35),
+                      color: fg.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
                 ),
+                // Title
                 Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Text(
-                    'Calculator Mode',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: fg,
-                    ),
-                  ),
-                ),
-                Flexible(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.only(bottom: 12),
-                    itemCount: CalcMode.values.length,
-                    itemBuilder: (sheetCtx, i) {
-                      final mode = CalcMode.values[i];
-                      final selected = mode == current;
-                      return ListTile(
-                        dense: true,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-                        leading: Icon(
-                          selected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                          color: selected ? ColorTokens.electricCyan : subFg.withOpacity(0.4),
-                          size: 20,
+                  padding: const EdgeInsets.fromLTRB(20, 14, 20, 6),
+                  child: Row(
+                    children: [
+                      Text(
+                        'Calculator Mode',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: fg,
                         ),
-                        title: Text(
-                          mode.displayName,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                            color: fg,
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: ColorTokens.electricCyan.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          '${CalcMode.values.length} modes',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: ColorTokens.electricCyan,
                           ),
                         ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 4),
+                // Mode grid
+                Flexible(
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      childAspectRatio: 1.05,
+                    ),
+                    itemCount: CalcMode.values.length,
+                    itemBuilder: (ctx, i) {
+                      final mode = CalcMode.values[i];
+                      final selected = mode == current;
+                      final accent = colors[mode] ?? ColorTokens.electricCyan;
+                      return Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                        borderRadius: BorderRadius.circular(14),
                         onTap: () {
                           Navigator.pop(sheetCtx);
                           cubit.setMode(mode);
                         },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: selected ? accent.withOpacity(0.12) : surfaceVar.withOpacity(0.4),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: selected ? accent : Colors.transparent,
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: accent.withOpacity(selected ? 0.2 : 0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  icons[mode] ?? Icons.calculate_outlined,
+                                  size: 22,
+                                  color: accent,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                mode.displayName,
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                                  color: fg,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                        ),
                       );
                     },
                   ),

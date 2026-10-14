@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../core/theme/color_tokens.dart';
 
@@ -12,35 +11,35 @@ class CalcStyles {
 
   static const TextStyle digit = TextStyle(
     fontFamily: mono,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: FontWeight.w500,
     height: 1,
   );
 
   static const TextStyle operator_ = TextStyle(
     fontFamily: mono,
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: FontWeight.w600,
     height: 1,
   );
 
   static const TextStyle equals = TextStyle(
     fontFamily: mono,
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: FontWeight.w700,
     height: 1,
   );
 
   static const TextStyle clear = TextStyle(
     fontFamily: ui,
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: FontWeight.w600,
     height: 1,
   );
 
   static const TextStyle function = TextStyle(
     fontFamily: ui,
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: FontWeight.w500,
     height: 1,
   );
@@ -144,23 +143,23 @@ class CalcButton extends StatelessWidget {
     return Expanded(
       flex: flex,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
-        child: Material(
-          color: _bgColor(isDark),
-          borderRadius: BorderRadius.circular(14),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(14),
-            onTap: () {
-              HapticFeedback.selectionClick();
-              onPressed();
-            },
-            child: SizedBox(
-              height: height,
-              child: Center(
-                child: icon != null
-                    ? Icon(icon, size: 18, color: _iconColor(isDark))
-                    : Text(text, style: CalcStyles.forType(type, isDark)),
+        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+        child: Center(
+          child: SizedBox(
+            height: height ?? 50,
+            width: double.infinity,
+            child: Material(
+              color: _bgColor(isDark),
+              borderRadius: BorderRadius.circular(12),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: onPressed,
+                child: Center(
+                  child: icon != null
+                      ? Icon(icon, size: 16, color: _iconColor(isDark))
+                      : Text(text, style: CalcStyles.forType(type, isDark)),
+                ),
               ),
             ),
           ),
