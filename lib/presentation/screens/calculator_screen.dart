@@ -139,12 +139,12 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                           child: Container(
                             decoration: BoxDecoration(
                               color: selected
-                                  ? ColorTokens.electricCyan.withOpacity(0.12)
+                                  ? Colors.white.withOpacity(0.1)
                                   : surfaceVar.withOpacity(0.4),
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
                                 color: selected
-                                    ? ColorTokens.electricCyan
+                                    ? Colors.white
                                     : Colors.transparent,
                                 width: 1.5,
                               ),
@@ -155,14 +155,14 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                                 Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: ColorTokens.electricCyan
+                                    color: Colors.white
                                         .withOpacity(selected ? 0.2 : 0.1),
                                     shape: BoxShape.circle,
                                   ),
                                   child: Icon(
                                     icons[mode] ?? Icons.calculate_outlined,
                                     size: 22,
-                                    color: ColorTokens.electricCyan,
+                                    color: Colors.white,
                                   ),
                                 ),
                                 const SizedBox(height: 6),
