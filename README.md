@@ -1,8 +1,18 @@
 # CalcPro Studio
 
-A calculator I built because every one I tried was either ugly, slow, or missing basic stuff like matrix operations and unit conversion. This one has everything in one app — no ads, no in-app purchases, free forever.
+**Version 2.1.0** — free, open source, no ads.
+
+A calculator I built because every one I tried was either ugly, slow, or missing basic stuff like matrix operations and unit conversion. This one has everything in one app — free forever.
 
 Built with Flutter. Works on Android, iOS, Web, Linux, macOS.
+
+**APK size:** ~18MB release (with R8 shrinking + obfuscation enabled). Debug builds are larger (~170MB) because they include JIT and debug symbols — that's normal.
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE). Use it, modify it, ship it, sell it. Just keep the copyright notice.
 
 ---
 
@@ -119,9 +129,18 @@ flutter test
 
 ---
 
-## License
+## What's next (v2.2+)
 
-MIT. Do whatever you want with it.
+- [ ] Graph plotting (2D function graphs, pan/zoom)
+- [ ] Equations solver (system of equations, polynomial roots)
+- [ ] Number base calculator improvements (bitwise visualizer)
+- [ ] Widget support (home screen calculator widget)
+- [ ] Wear OS / tablet layouts
+- [ ] CSV import/export for statistics
+- [ ] More themes + custom theme builder
+- [ ] Gesture controls (swipe to delete, shake to clear)
+- [ ] Offline currency cache (last-known rates when no internet)
+- [ ] iOS home screen widget
 
 ---
 
