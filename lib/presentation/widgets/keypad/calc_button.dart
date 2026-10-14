@@ -143,23 +143,20 @@ class CalcButton extends StatelessWidget {
     return Expanded(
       flex: flex,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
-        child: Center(
-          child: SizedBox(
-            height: height ?? 50,
-            width: double.infinity,
-            child: Material(
-              color: _bgColor(isDark),
-              borderRadius: BorderRadius.circular(12),
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: onPressed,
-                child: Center(
-                  child: icon != null
-                      ? Icon(icon, size: 16, color: _iconColor(isDark))
-                      : Text(text, style: CalcStyles.forType(type, isDark)),
-                ),
+        padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 0),
+        child: Material(
+          color: _bgColor(isDark),
+          borderRadius: BorderRadius.circular(12),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: onPressed,
+            child: SizedBox(
+              height: height,
+              child: Center(
+                child: icon != null
+                    ? Icon(icon, size: 16, color: _iconColor(isDark))
+                    : Text(text, style: CalcStyles.forType(type, isDark)),
               ),
             ),
           ),

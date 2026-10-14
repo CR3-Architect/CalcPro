@@ -53,18 +53,6 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
       CalcMode.currency: Icons.currency_exchange_rounded,
     };
 
-    final colors = <CalcMode, Color>{
-      CalcMode.standard: ColorTokens.electricCyan,
-      CalcMode.scientific: ColorTokens.accentPurple,
-      CalcMode.calculus: ColorTokens.accentBlue,
-      CalcMode.matrix: ColorTokens.accentGreen,
-      CalcMode.complex: ColorTokens.accentPink,
-      CalcMode.stats: ColorTokens.accentOrange,
-      CalcMode.programmer: ColorTokens.accentYellow,
-      CalcMode.unitConverter: ColorTokens.accentPurple,
-      CalcMode.currency: ColorTokens.accentOrange,
-    };
-
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: surface,
@@ -112,9 +100,9 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                           color: ColorTokens.electricCyan.withOpacity(0.12),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Text(
-                          '${CalcMode.values.length} modes',
-                          style: const TextStyle(
+                        child: const Text(
+                          '9 modes',
+                          style: TextStyle(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
                             color: ColorTokens.electricCyan,
@@ -140,54 +128,59 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                     itemBuilder: (ctx, i) {
                       final mode = CalcMode.values[i];
                       final selected = mode == current;
-                      final accent = colors[mode] ?? ColorTokens.electricCyan;
                       return Material(
                         color: Colors.transparent,
                         child: InkWell(
-                        borderRadius: BorderRadius.circular(14),
-                        onTap: () {
-                          Navigator.pop(sheetCtx);
-                          cubit.setMode(mode);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: selected ? accent.withOpacity(0.12) : surfaceVar.withOpacity(0.4),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
-                              color: selected ? accent : Colors.transparent,
-                              width: 1.5,
+                          borderRadius: BorderRadius.circular(14),
+                          onTap: () {
+                            Navigator.pop(sheetCtx);
+                            cubit.setMode(mode);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: selected
+                                  ? ColorTokens.electricCyan.withOpacity(0.12)
+                                  : surfaceVar.withOpacity(0.4),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: selected
+                                    ? ColorTokens.electricCyan
+                                    : Colors.transparent,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: ColorTokens.electricCyan
+                                        .withOpacity(selected ? 0.2 : 0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    icons[mode] ?? Icons.calculate_outlined,
+                                    size: 22,
+                                    color: ColorTokens.electricCyan,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Text(
+                                  mode.displayName,
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    fontWeight:
+                                        selected ? FontWeight.w700 : FontWeight.w500,
+                                    color: fg,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             ),
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: accent.withOpacity(selected ? 0.2 : 0.1),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Icon(
-                                  icons[mode] ?? Icons.calculate_outlined,
-                                  size: 22,
-                                  color: accent,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                mode.displayName,
-                                style: TextStyle(
-                                  fontSize: 11.5,
-                                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                                  color: fg,
-                                ),
-                                textAlign: TextAlign.center,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
                         ),
                       );
                     },
