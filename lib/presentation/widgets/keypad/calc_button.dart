@@ -11,35 +11,35 @@ class CalcStyles {
 
   static const TextStyle digit = TextStyle(
     fontFamily: mono,
-    fontSize: 18,
+    fontSize: 21,
     fontWeight: FontWeight.w500,
     height: 1,
   );
 
   static const TextStyle operator_ = TextStyle(
     fontFamily: mono,
-    fontSize: 20,
+    fontSize: 23,
     fontWeight: FontWeight.w600,
     height: 1,
   );
 
   static const TextStyle equals = TextStyle(
     fontFamily: mono,
-    fontSize: 22,
+    fontSize: 25,
     fontWeight: FontWeight.w700,
     height: 1,
   );
 
   static const TextStyle clear = TextStyle(
     fontFamily: ui,
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: FontWeight.w600,
     height: 1,
   );
 
   static const TextStyle function = TextStyle(
     fontFamily: ui,
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1,
   );
