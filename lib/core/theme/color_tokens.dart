@@ -41,8 +41,8 @@ class ColorTokens {
   static const Color buttonPrimaryLight = Color(0xFF3949AB);
   static const Color buttonSecondary = Color(0xFF2D333B);
   static const Color buttonSecondaryLight = Color(0xFFE1E4E8);
-  static const Color buttonOperator = Color(0xFF00897B);
-  static const Color buttonOperatorLight = Color(0xFF4DB6AC);
+  static const Color buttonOperator = Color(0xFFF59E0B);
+  static const Color buttonOperatorLight = Color(0xFFD97706);
   static const Color buttonEquals = Color(0xFF00BCD4);
   static const Color buttonEqualsLight = Color(0xFF0097A7);
   static const Color buttonClear = Color(0xFFE53935);

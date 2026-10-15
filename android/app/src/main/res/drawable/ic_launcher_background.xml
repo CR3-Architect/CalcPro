@@ -4,8 +4,8 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Background circle -->
+    <!-- Solid background matching app dark theme -->
     <path
         android:fillColor="#0D1117"
-        android:pathData="M54,54m-54,0a54,54 0,1 1,108 0a54,54 0,1 1,-108 0"/>
+        android:pathData="M0,0 L108,0 L108,108 L0,108 Z"/>
 </vector>

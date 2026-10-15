@@ -1,82 +1,78 @@
+<div align="center">
+
 # CalcPro Studio
 
-**Version 2.1.0** — free, open source, no ads.
+**A full-featured calculator for students, engineers, and developers.**
 
-A calculator I built because every one I tried was either ugly, slow, or missing basic stuff like matrix operations and unit conversion. This one has everything in one app — free forever.
+[![Flutter](https://img.shields.io/badge/Flutter-3.19+-02569B?style=flat-square&logo=flutter&logoColor=white)](https://flutter.dev)
+[![Dart](https://img.shields.io/badge/Dart-3.3+-0175C2?style=flat-square&logo=dart&logoColor=white)](https://dart.dev)
+[![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![Release](https://img.shields.io/badge/version-2.1.0-orange?style=flat-square)](../../releases)
+[![APK](https://img.shields.io/badge/APK-18%20MB-brightgreen?style=flat-square)](../../releases)
 
-Built with Flutter. Works on Android, iOS, Web, Linux, macOS.
+Nine calculation modes · Live currency rates · 160 currencies · 35 passing tests · No ads, no tracking
 
-**APK size:** ~18MB release (with R8 shrinking + obfuscation enabled). Debug builds are larger (~170MB) because they include JIT and debug symbols — that's normal.
-
----
-
-## License
-
-MIT — see [LICENSE](LICENSE). Use it, modify it, ship it, sell it. Just keep the copyright notice.
+</div>
 
 ---
 
-## What's inside
+## Why another calculator?
 
-**9 modes** — switch between them from the top-left chip:
+Because the ones I tried forced me into five different apps: one for matrices, one for unit conversion, one for currency, one for programmer math, and something else for calculus. CalcPro puts all of it in a single, fast, offline-first app — with a parser I wrote from scratch instead of string-punting to `eval`.
 
-| Mode | What it does |
+---
+
+## Modes
+
+| Mode | What it handles |
 |---|---|
-| Standard | Normal calculator. 789÷, memory keys, undo/redo, share result as image |
-| Scientific | sin/cos/tan (deg/rad), log, ln, √, xʸ, nPr, nCr, factorial, π, e |
-| Calculus | Derivatives, integrals (Simpson's rule), limits, sum, product, Taylor series, ODE |
-| Matrix | Build matrices visually, then transpose, determinant, inverse, trace, rank, eigenvalues, solve Ax=b |
-| Complex | Complex number arithmetic — conjugate, modulus, argument, re/im parts, exp, ln, trig |
-| Statistics | Mean/median/std dev, regression, normal/binomial/Poisson/t/χ² distributions |
-| Programmer | BIN/OCT/DEC/HEX conversion, AND/OR/XOR/NAND/NOR, shifts, NOT, 1's/2's complement, popcount, CLZ |
-| Unit Converter | Length, mass, temperature, area, volume, speed, time, data, pressure, energy, power, angle — ~100 units + physical constants |
-| Currency Converter | Live exchange rates for 160+ currencies (including AFN, PKR, INR, SAR, AED...) via open.er-api.com. Search, swap, share |
-
-**Other stuff:**
-- Expression parser (lexer → recursive descent → AST → evaluator), not just button mashing
-- Live result preview as you type
-- History saved locally (500 entries), searchable, exportable
-- 3 themes: Dark, Light, AMOLED
-- High contrast mode for accessibility
-- Haptic feedback (toggle in Settings)
-- Adjustable decimal precision
-- Undo/Redo (50 steps deep)
-- Share calculations as image or text
+| **Standard** | Arithmetic, percent, memory (MC/M+/M−/MR), undo/redo, share as image |
+| **Scientific** | Trig (deg/rad), inverses, hyperbolics, logs, roots, nPr/nCr, factorial, constants |
+| **Calculus** | Numerical derivatives, integrals (Simpson's rule), limits, sums, products, Taylor series, ODEs |
+| **Matrix** | Visual editor — transpose, determinant, inverse, trace, rank, eigenvalues, solve Ax=b |
+| **Complex** | Full complex arithmetic — conjugate, modulus, argument, re/im, exp, ln, trig |
+| **Statistics** | Descriptive stats, regression, normal/binomial/Poisson/t/χ² distributions |
+| **Programmer** | BIN/OCT/DEC/HEX, bitwise ops, shifts, complements, popcount, CLZ |
+| **Unit Converter** | 12 categories, ~100 units, physical constants |
+| **Currency** | Live rates, 160+ currencies with official names and countries, search, swap |
 
 ---
 
-## Project structure
+## Highlights
+
+- **Custom expression engine** — lexer → recursive-descent parser → AST → visitor evaluator. Full operator precedence, functions, constants, variables.
+- **Live preview** — results update as you type, before you press `=`.
+- **History** — 500 entries persisted locally, searchable, shareable.
+- **Themes** — Dark, Light, AMOLED, plus a high-contrast accessibility mode.
+- **Haptics** — toggleable in Settings.
+- **Precision control** — configurable decimal places.
+- **Undo/Redo** — 50 steps deep.
+- **Share** — export results as text or PNG image.
+
+---
+
+## Architecture
 
 ```
 lib/
-├── main.dart
-├── core/
-│   ├── constants/    # Math constants
-│   ├── enums/        # CalcMode, AngleMode, NumberBase
-│   ├── theme/        # Colors, app theme
-│   └── utils/        # Share image service
+├── core/           enums, theme tokens, share-image utility
 ├── domain/
-│   ├── ast/          # AST node definitions
-│   ├── evaluator/    # Walks the AST, computes results
-│   ├── functions/    # Calculus, complex, matrix, programmer, stats
-│   ├── models/       # CalculationEntry, VariableScope
-│   └── parser/       # Lexer + Parser (recursive descent)
-├── l10n/             # Localization scaffold (9 languages)
+│   ├── parser/     lexer + recursive-descent parser
+│   ├── ast/        AST node definitions
+│   ├── evaluator/  visitor-pattern evaluator
+│   └── functions/  calculus, complex, matrix, programmer, stats
+├── l10n/           localization scaffold (9 languages)
 └── presentation/
-    ├── bloc/         # CalculatorCubit, HistoryCubit (flutter_bloc)
-    ├── screens/      # All screens (calculator, history, settings, converters, etc.)
-    └── widgets/
-        ├── display/  # Expression, result, history tape
-        └── keypad/   # All 7 keypads + CalcButton
+    ├── bloc/       CalculatorCubit, HistoryCubit (flutter_bloc)
+    ├── screens/    calculator, history, settings, converters, editors
+    └── widgets/    display + 7 specialized keypads
 ```
 
-State management is flutter_bloc (Cubit). Parsing is custom — I wrote the lexer and parser from scratch because I wanted full control over operator precedence and function handling.
+**Stack:** Flutter · flutter_bloc · shared_preferences · http · share_plus
 
 ---
 
-## Running it
-
-**Prerequisites:** Flutter SDK 3.19+
+## Build & run
 
 ```bash
 git clone https://github.com/CR3-Architect/CalcPro.git
@@ -84,64 +80,70 @@ cd CalcPro
 flutter pub get
 ```
 
-**Run on device:**
+**Development**
 ```bash
-flutter run -d android
-flutter run -d chrome
-flutter run -d linux
+flutter run                 # hot-reload on connected device
+flutter test                # 35 tests
 ```
 
-**Build APK:**
+**Release (small APK)**
 ```bash
-flutter build apk --debug    # for testing
-flutter build apk --release  # for sharing
+flutter build apk --release --split-per-abi --tree-shake-icons
+# → build/app/outputs/flutter-apk/app-arm64-v8a-release.apk  (~18 MB)
 ```
 
-**Install on phone via ADB:**
+**Install via ADB**
 ```bash
-adb install -r build/app/outputs/flutter-apk/app-debug.apk
+adb install -r build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
 adb shell am start -n com.calcpro.calcpro_studio/.MainActivity
 ```
 
-**Run tests:**
-```bash
-flutter test
-```
+---
+
+## Size
+
+| Build | Size |
+|---|---|
+| Debug (all ABIs) | 152 MB |
+| Release arm64 | **18.2 MB** |
+| Release armeabi-v7a | 15.9 MB |
+
+Release builds use R8 shrinking, resource shrinking, icon tree-shaking, and per-ABI splits. The `google_fonts` runtime downloader was removed in v2.1.0 in favor of system fonts.
 
 ---
 
 ## Testing
 
-35 tests passing — covers lexer, parser, evaluator, calculus functions, and programmer operations. Run with `flutter test`.
+```bash
+flutter test
+```
+
+35 tests covering the lexer, parser, evaluator, calculus functions, and programmer operations.
 
 ---
 
-## Packages
+## Roadmap
 
-- `flutter_bloc` — state management
-- `shared_preferences` — local storage (history, settings)
-- `google_fonts` — Inter + Roboto Mono
-- `share_plus` — share results
-- `http` — currency API
-- `path_provider` — temp files for image sharing
-- `vector_math` — math utilities
-- `intl` — localization
-
----
-
-## What's next (v2.2+)
-
-- [ ] Graph plotting (2D function graphs, pan/zoom)
-- [ ] Equations solver (system of equations, polynomial roots)
-- [ ] Number base calculator improvements (bitwise visualizer)
-- [ ] Widget support (home screen calculator widget)
-- [ ] Wear OS / tablet layouts
+- [ ] 2D function graphing
+- [ ] Equation solver (systems, polynomial roots)
+- [ ] Home screen widget (Android)
 - [ ] CSV import/export for statistics
-- [ ] More themes + custom theme builder
-- [ ] Gesture controls (swipe to delete, shake to clear)
-- [ ] Offline currency cache (last-known rates when no internet)
-- [ ] iOS home screen widget
+- [ ] Offline currency cache
+- [ ] Custom theme builder
+- [ ] Wear OS + tablet layouts
 
 ---
 
-Built by [Atiqullah](https://github.com/CR3-Architect) — if you find bugs or want something added, open an issue.
+## License
+
+[MIT](LICENSE) — use it, modify it, ship it. Keep the copyright notice.
+
+---
+
+<div align="center">
+
+Built with **Flutter** · © 2026 [Atiqullah](https://github.com/CR3-Architect)
+
+[Report a bug](../../issues) · [Request a feature](../../issues)
+
+</div>

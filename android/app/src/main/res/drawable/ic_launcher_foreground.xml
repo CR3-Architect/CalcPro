@@ -5,35 +5,66 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Calculator body -->
+    <!-- Calculator body - top-left quadrant (lighter blue-gray) -->
     <path
-        android:fillColor="#161B22"
-        android:pathData="M34,26 L74,26 C77.3,26 80,28.7 80,32 L80,76 C80,79.3 77.3,82 74,82 L34,82 C30.7,82 28,79.3 28,76 L28,32 C28,28.7 30.7,26 34,26 Z"/>
+        android:fillColor="#7A8B99"
+        android:pathData="M28,20 L54,20 L54,54 L28,54 Z"/>
 
-    <!-- Screen -->
+    <!-- Calculator body - top-right quadrant (darker blue-gray) -->
     <path
-        android:fillColor="#0D4160"
-        android:pathData="M34,32 L74,32 C74,32 74,44 74,44 L34,44 C34,44 34,32 34,32 Z"/>
+        android:fillColor="#3D4F5C"
+        android:pathData="M54,20 L80,20 L80,54 L54,54 Z"/>
 
-    <!-- Screen highlight -->
+    <!-- Calculator body - bottom-left quadrant (medium blue-gray) -->
     <path
-        android:fillColor="#00D4FF"
-        android:fillAlpha="0.3"
-        android:pathData="M36,34 L50,34 C50,34 50,42 50,42 L36,42 C36,42 36,34 36,34 Z"/>
+        android:fillColor="#5A6B78"
+        android:pathData="M28,54 L54,54 L54,88 L28,88 Z"/>
 
-    <!-- Button row 1 -->
-    <path android:fillColor="#21262D" android:pathData="M34,50 L42,50 C43.1,50 44,50.9 44,52 L44,56 C44,57.1 43.1,58 42,58 L34,58 C32.9,58 32,57.1 32,56 L32,52 C32,50.9 32.9,50 34,50 Z"/>
-    <path android:fillColor="#21262D" android:pathData="M48,50 L56,50 C57.1,50 58,50.9 58,52 L58,56 C58,57.1 57.1,58 56,58 L48,58 C46.9,58 46,57.1 46,56 L46,52 C46,50.9 46.9,50 48,50 Z"/>
-    <path android:fillColor="#21262D" android:pathData="M62,50 L70,50 C71.1,50 72,50.9 72,52 L72,56 C72,57.1 71.1,58 70,58 L62,58 C60.9,58 60,57.1 60,56 L60,52 C60,50.9 60.9,50 62,50 Z"/>
+    <!-- Calculator body - bottom-right (behind orange circle) -->
+    <path
+        android:fillColor="#4A5A66"
+        android:pathData="M54,54 L80,54 L80,88 L54,88 Z"/>
 
-    <!-- Button row 2 -->
-    <path android:fillColor="#21262D" android:pathData="M34,62 L42,62 C43.1,62 44,62.9 44,64 L44,68 C44,69.1 43.1,70 42,70 L34,70 C32.9,70 32,69.1 32,68 L32,64 C32,62.9 32.9,62 34,62 Z"/>
-    <path android:fillColor="#21262D" android:pathData="M48,62 L56,62 C57.1,62 58,62.9 58,64 L58,68 C58,69.1 57.1,70 56,70 L48,70 C46.9,70 46,69.1 46,68 L46,64 C46,62.9 46.9,62 48,62 Z"/>
+    <!-- Rounded corners mask - top-left cut -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M28,20 L34,20 C30.7,20 28,22.7 28,26 L28,20 Z"/>
 
-    <!-- Equals button (cyan accent) -->
-    <path android:fillColor="#00D4FF" android:pathData="M62,62 L70,62 C71.1,62 72,62.9 72,64 L72,68 C72,69.1 71.1,70 70,70 L62,70 C60.9,70 60,69.1 60,68 L60,64 C60,62.9 60.9,62 62,62 Z"/>
+    <!-- Pi symbol π (top-left) -->
+    <path
+        android:fillColor="#E8EDF2"
+        android:pathData="M36,32 L36,44 M42,32 L42,44 M34,36 L44,36 M34,40 L40,40"
+        android:strokeWidth="2.5"
+        android:strokeColor="#E8EDF2"
+        android:strokeLineCap="round"/>
 
-    <!-- Button row 3 -->
-    <path android:fillColor="#21262D" android:pathData="M34,74 L42,74 C43.1,74 44,74.9 44,76 L44,78 C44,79.1 43.1,80 42,80 L34,80 C32.9,80 32,79.1 32,78 L32,76 C32,74.9 32.9,74 34,74 Z"/>
-    <path android:fillColor="#21262D" android:pathData="M48,74 L70,74 C71.1,74 72,74.9 72,76 L72,78 C72,79.1 71.1,80 70,80 L48,80 C46.9,80 46,79.1 46,78 L46,76 C46,74.9 46.9,74 48,74 Z"/>
+    <!-- Percent symbol % (top-right) -->
+    <path
+        android:fillColor="#E8EDF2"
+        android:pathData="M60,32 m-3,0 a3,3 0,1 1,6 0 a3,3 0,1 1,-6 0 M72,44 m-3,0 a3,3 0,1 1,6 0 a3,3 0,1 1,-6 0"/>
+    <path
+        android:strokeColor="#E8EDF2"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:pathData="M72,30 L60,48"/>
+
+    <!-- Square root symbol √ (bottom-left) -->
+    <path
+        android:strokeColor="#E8EDF2"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M34,70 L38,76 L44,64 L52,64"/>
+
+    <!-- Orange circle (bottom-right) -->
+    <path
+        android:fillColor="#F28C28"
+        android:pathData="M66,68 m-22,0 a22,22 0,1 1,44 0 a22,22 0,1 1,-44 0"/>
+
+    <!-- Equals symbol = (white, inside orange circle) -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M56,64 L76,64 M56,72 L76,72"/>
 </vector>
